@@ -21,6 +21,10 @@ const DEFAULT_SMARTBUFFER_SIZE: number = 4096;
 // The default string encoding to use for reading/writing strings.
 const DEFAULT_SMARTBUFFER_ENCODING: BufferEncoding = 'utf8';
 
+// In the DataView class, we use true for LE, false for BE.
+const LE = true;
+const BE = false;
+
 class SmartBuffer {
   public length: number = 0;
 
@@ -131,7 +135,7 @@ class SmartBuffer {
    * @return { Number }
    */
   readInt8(offset?: number): number {
-    return this._readNumberValue(Buffer.prototype.readInt8, 1, offset);
+    return this._readNumberValue(DataView.prototype.getInt8, false, 1, offset);
   }
 
   /**
@@ -141,7 +145,7 @@ class SmartBuffer {
    * @return { Number }
    */
   readInt16BE(offset?: number): number {
-    return this._readNumberValue(Buffer.prototype.readInt16BE, 2, offset);
+    return this._readNumberValue(DataView.prototype.getInt16, BE, 2, offset);
   }
 
   /**
@@ -151,7 +155,7 @@ class SmartBuffer {
    * @return { Number }
    */
   readInt16LE(offset?: number): number {
-    return this._readNumberValue(Buffer.prototype.readInt16LE, 2, offset);
+    return this._readNumberValue(DataView.prototype.getInt16, LE, 2, offset);
   }
 
   /**
@@ -161,7 +165,7 @@ class SmartBuffer {
    * @return { Number }
    */
   readInt32BE(offset?: number): number {
-    return this._readNumberValue(Buffer.prototype.readInt32BE, 4, offset);
+    return this._readNumberValue(DataView.prototype.getInt32, BE, 4, offset);
   }
 
   /**
@@ -171,7 +175,7 @@ class SmartBuffer {
    * @return { Number }
    */
   readInt32LE(offset?: number): number {
-    return this._readNumberValue(Buffer.prototype.readInt32LE, 4, offset);
+    return this._readNumberValue(DataView.prototype.getInt32, LE, 4, offset);
   }
 
   /**
@@ -182,7 +186,7 @@ class SmartBuffer {
    */
   readBigInt64BE(offset?: number): bigint {
     bigIntAndBufferInt64Check('readBigInt64BE');
-    return this._readNumberValue(Buffer.prototype.readBigInt64BE, 8, offset);
+    return this._readNumberValue(DataView.prototype.getBigInt64, BE, 8, offset);
   }
 
   /**
@@ -193,7 +197,7 @@ class SmartBuffer {
    */
   readBigInt64LE(offset?: number): bigint {
     bigIntAndBufferInt64Check('readBigInt64LE');
-    return this._readNumberValue(Buffer.prototype.readBigInt64LE, 8, offset);
+    return this._readNumberValue(DataView.prototype.getBigInt64, LE, 8, offset);
   }
 
   /**
@@ -378,7 +382,7 @@ class SmartBuffer {
    * @return { Number }
    */
   readUInt8(offset?: number): number {
-    return this._readNumberValue(Buffer.prototype.readUInt8, 1, offset);
+    return this._readNumberValue(DataView.prototype.getUint8, false, 1, offset);
   }
 
   /**
@@ -388,7 +392,7 @@ class SmartBuffer {
    * @return { Number }
    */
   readUInt16BE(offset?: number): number {
-    return this._readNumberValue(Buffer.prototype.readUInt16BE, 2, offset);
+    return this._readNumberValue(DataView.prototype.getUint16, BE, 2, offset);
   }
 
   /**
@@ -398,7 +402,7 @@ class SmartBuffer {
    * @return { Number }
    */
   readUInt16LE(offset?: number): number {
-    return this._readNumberValue(Buffer.prototype.readUInt16LE, 2, offset);
+    return this._readNumberValue(DataView.prototype.getUint16, LE, 2, offset);
   }
 
   /**
@@ -408,7 +412,7 @@ class SmartBuffer {
    * @return { Number }
    */
   readUInt32BE(offset?: number): number {
-    return this._readNumberValue(Buffer.prototype.readUInt32BE, 4, offset);
+    return this._readNumberValue(DataView.prototype.getUint32, BE, 4, offset);
   }
 
   /**
@@ -418,7 +422,7 @@ class SmartBuffer {
    * @return { Number }
    */
   readUInt32LE(offset?: number): number {
-    return this._readNumberValue(Buffer.prototype.readUInt32LE, 4, offset);
+    return this._readNumberValue(DataView.prototype.getUint32, LE, 4, offset);
   }
 
   /**
@@ -429,7 +433,7 @@ class SmartBuffer {
    */
   readBigUInt64BE(offset?: number): bigint {
     bigIntAndBufferInt64Check('readBigUInt64BE');
-    return this._readNumberValue(Buffer.prototype.readBigUInt64BE, 8, offset);
+    return this._readNumberValue(DataView.prototype.getBigUint64, BE, 8, offset);
   }
 
   /**
@@ -440,7 +444,7 @@ class SmartBuffer {
    */
   readBigUInt64LE(offset?: number): bigint {
     bigIntAndBufferInt64Check('readBigUInt64LE');
-    return this._readNumberValue(Buffer.prototype.readBigUInt64LE, 8, offset);
+    return this._readNumberValue(DataView.prototype.getBigUint64, LE, 8, offset);
   }
 
   /**
@@ -624,7 +628,7 @@ class SmartBuffer {
    * @return { Number }
    */
   readFloatBE(offset?: number): number {
-    return this._readNumberValue(Buffer.prototype.readFloatBE, 4, offset);
+    return this._readNumberValue(DataView.prototype.getFloat32, BE, 4, offset);
   }
 
   /**
@@ -634,7 +638,7 @@ class SmartBuffer {
    * @return { Number }
    */
   readFloatLE(offset?: number): number {
-    return this._readNumberValue(Buffer.prototype.readFloatLE, 4, offset);
+    return this._readNumberValue(DataView.prototype.getFloat32, LE, 4, offset);
   }
 
   /**
@@ -694,7 +698,7 @@ class SmartBuffer {
    * @return { Number }
    */
   readDoubleBE(offset?: number): number {
-    return this._readNumberValue(Buffer.prototype.readDoubleBE, 8, offset);
+    return this._readNumberValue(DataView.prototype.getFloat64, BE, 8, offset);
   }
 
   /**
@@ -704,7 +708,7 @@ class SmartBuffer {
    * @return { Number }
    */
   readDoubleLE(offset?: number): number {
-    return this._readNumberValue(Buffer.prototype.readDoubleLE, 8, offset);
+    return this._readNumberValue(DataView.prototype.getFloat64, LE, 8, offset);
   }
 
   /**
@@ -1319,11 +1323,12 @@ class SmartBuffer {
    *
    * @returns { T } the number value
    */
-  private _readNumberValue<T>(func: (offset: number) => T, byteSize: number, offset?: number): T {
+  private _readNumberValue<T>(func: (offset: number) => T, endianness: boolean, byteSize: number, offset?: number): T {
     this.ensureReadable(byteSize, offset);
 
     // Call Buffer.readXXXX();
-    const value = func.call(this._buff, typeof offset === 'number' ? offset : this._readOffset);
+    const dv = new DataView(this._buff.buffer);
+    const value = func.call(dv, typeof offset === 'number' ? offset : this._readOffset, endianness);
 
     // Adjust internal read offset if an optional read offset was not provided.
     if (typeof offset === 'undefined') {
