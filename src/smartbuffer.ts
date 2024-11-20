@@ -915,12 +915,12 @@ class SmartBuffer {
   /**
    * Writes a Buffer to the current write position.
    *
-   * @param value { Buffer } The Buffer to write.
+   * @param value { Uint8Array } The Buffer to write.
    * @param offset { Number } The offset to write the Buffer to.
    *
    * @return this
    */
-  insertBuffer(value: Buffer, offset: number): SmartBuffer {
+  insertBuffer(value: Uint8Array, offset: number): SmartBuffer {
     checkOffsetValue(offset);
 
     return this._handleBuffer(value, true, offset);
@@ -929,12 +929,12 @@ class SmartBuffer {
   /**
    * Writes a Buffer to the current write position.
    *
-   * @param value { Buffer } The Buffer to write.
+   * @param value { Uint8Array } The Buffer to write.
    * @param offset { Number } The offset to write the Buffer to.
    *
    * @return this
    */
-  writeBuffer(value: Buffer, offset?: number): SmartBuffer {
+  writeBuffer(value: Uint8Array, offset?: number): SmartBuffer {
     return this._handleBuffer(value, false, offset);
   }
 
@@ -966,12 +966,12 @@ class SmartBuffer {
   /**
    * Inserts a null-terminated Buffer.
    *
-   * @param value { Buffer } The Buffer to write.
+   * @param value { Uint8Array } The Buffer to write.
    * @param offset { Number } The offset to write the Buffer to.
    *
    * @return this
    */
-  insertBufferNT(value: Buffer, offset: number): SmartBuffer {
+  insertBufferNT(value: Uint8Array, offset: number): SmartBuffer {
     checkOffsetValue(offset);
 
     // Write Values
@@ -984,12 +984,12 @@ class SmartBuffer {
   /**
    * Writes a null-terminated Buffer.
    *
-   * @param value { Buffer } The Buffer to write.
+   * @param value { Uint8Array } The Buffer to write.
    * @param offset { Number } The offset to write the Buffer to.
    *
    * @return this
    */
-  writeBufferNT(value: Buffer, offset?: number): SmartBuffer {
+  writeBufferNT(value: Uint8Array, offset?: number): SmartBuffer {
     // Checks for valid numberic value;
     if (typeof offset !== 'undefined') {
       checkOffsetValue(offset);
@@ -1170,7 +1170,8 @@ class SmartBuffer {
     }
 
     // Write value
-    this._buff.write(value, offsetVal, byteLength, encodingVal);
+    const dv = new Uint8Array(this._buff.buffer, offsetVal, byteLength);
+    new TextEncoder().encodeInto(value, dv);
 
     // Increment internal Buffer write offset;
     if (isInsert) {
@@ -1194,7 +1195,7 @@ class SmartBuffer {
    * @param value { Buffer } The Buffer to write.
    * @param offset { Number } The offset to write the Buffer to.
    */
-  private _handleBuffer(value: Buffer, isInsert: boolean, offset?: number): SmartBuffer {
+  private _handleBuffer(value: Uint8Array, isInsert: boolean, offset?: number): SmartBuffer {
     const offsetVal = typeof offset === 'number' ? offset : this._writeOffset;
 
     // Ensure there is enough internal Buffer capacity.
@@ -1205,7 +1206,8 @@ class SmartBuffer {
     }
 
     // Write buffer value
-    value.copy(this._buff, offsetVal);
+    let dv = new Uint8Array(this._buff.buffer);
+    dv.set(value, offsetVal);
 
     // Increment internal Buffer write offset;
     if (isInsert) {
