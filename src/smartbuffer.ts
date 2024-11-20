@@ -845,7 +845,7 @@ class SmartBuffer {
     }
 
     // Read string value
-    const value = this._buff.slice(this._readOffset, nullPos);
+    const value = this._buff.subarray(this._readOffset, nullPos);
 
     // Increment internal Buffer read offset
     this._readOffset = nullPos + 1;
@@ -905,7 +905,7 @@ class SmartBuffer {
     const endPoint = Math.min(this.length, this._readOffset + lengthVal);
 
     // Read buffer value
-    const value = this._buff.slice(this._readOffset, endPoint);
+    const value = this._buff.subarray(this._readOffset, endPoint);
 
     // Increment internal Buffer read offset
     this._readOffset = endPoint;
@@ -956,7 +956,7 @@ class SmartBuffer {
     }
 
     // Read value
-    const value = this._buff.slice(this._readOffset, nullPos);
+    const value = this._buff.subarray(this._readOffset, nullPos);
 
     // Increment internal Buffer read offset
     this._readOffset = nullPos + 1;
@@ -1102,7 +1102,7 @@ class SmartBuffer {
    * @param { Buffer }
    */
   toBuffer(): Buffer {
-    return this._buff.slice(0, this.length);
+    return this._buff.subarray(0, this.length);
   }
 
   /**
