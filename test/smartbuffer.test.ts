@@ -1,5 +1,5 @@
-import { SmartBuffer, SmartBufferOptions } from '../build/smartbuffer.js';
-import { ERRORS, isFiniteInteger, checkEncoding, checkOffsetValue, checkLengthValue, checkTargetOffset } from '../build/utils.js';
+import { SmartBuffer, SmartBufferOptions } from '../src/smartbuffer.js';
+import { ERRORS, isFiniteInteger, checkEncoding, checkOffsetValue, checkLengthValue, checkTargetOffset } from '../src/utils.js';
 import { assert } from 'chai';
 import 'mocha';
 
