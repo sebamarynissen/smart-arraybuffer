@@ -1,4 +1,4 @@
-import { SmartBuffer, SmartBufferOptions } from '../src/smartbuffer.js';
+import { SmartBuffer, SmartBufferOptions } from '../src/smart-arraybuff.js';
 import { ERRORS, isFiniteInteger, checkEncoding, checkOffsetValue, checkLengthValue, checkTargetOffset } from '../src/utils.js';
 import { expect, assert } from 'chai';
 import 'mocha';

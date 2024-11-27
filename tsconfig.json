@@ -1,26 +1,16 @@
 {
-    "compilerOptions": {
-        "outDir": "./dist",
-        "rootDir": "./src",
-        "module": "nodenext",
-        "moduleDetection": "force",
-        "target": "es2022",
-
-        // other best practice configs
-        "moduleResolution": "nodenext",
-        "noImplicitAny": false,
-        "removeComments": false,
-        "composite": true,
-        "resolveJsonModule": true,
-        "sourceMap": true,
-        "isolatedModules": false,
-        "declaration": true
-    },
-    "exclude": [
-      "node_modules",
-      ".idea",
-      "dist",
-      "typings",
-      "test"
-    ]
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "target": "es2020",
+    "module": "nodenext",
+    "strict": false,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "skipLibCheck": true,
+    "declaration": true,
+    "sourceMap": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

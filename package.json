@@ -2,7 +2,10 @@
   "name": "smart-arraybuffer",
   "version": "4.2.0",
   "description": "smart-arraybuffer is an ArrayBuffer wrapper that adds automatic read & write offset tracking, string operations, data insertions, and more.",
-  "main": "build/smartbuffer.js",
+  "main": "dist/smart-arraybuffer.js",
+  "exports": {
+    ".": "./dist/smart-arraybuffer.js"
+  },
   "type": "module",
   "contributors": [
     "syvita"
@@ -43,7 +46,7 @@
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   },
-  "typings": "typings/smartbuffer.d.ts",
+  "typings": "typings/smart-arraybuffer.d.ts",
   "dependencies": {},
   "scripts": {
     "prepublish": "npm install -g typescript && npm run build",
