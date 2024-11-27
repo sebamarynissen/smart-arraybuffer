@@ -214,7 +214,7 @@ class SmartBuffer {
    * @return { BigInt }
    */
   readBigInt64BE(offset?: number): bigint {
-    bigIntAndBufferInt64Check('readBigInt64BE');
+    bigIntAndBufferInt64Check('getBigInt64');
     return this._readNumberValue(DataView.prototype.getBigInt64, BE, 8, offset);
   }
 
@@ -225,7 +225,7 @@ class SmartBuffer {
    * @return { BigInt }
    */
   readBigInt64LE(offset?: number): bigint {
-    bigIntAndBufferInt64Check('readBigInt64LE');
+    bigIntAndBufferInt64Check('getBigInt64');
     return this._readNumberValue(DataView.prototype.getBigInt64, LE, 8, offset);
   }
 
@@ -359,7 +359,7 @@ class SmartBuffer {
    * @return this
    */
   writeBigInt64BE(value: bigint, offset?: number): SmartBuffer {
-    bigIntAndBufferInt64Check('writeBigInt64BE');
+    bigIntAndBufferInt64Check('setBigInt64');
     return this._writeNumberValue(DataView.prototype.setBigInt64, BE, 8, value, offset);
   }
 
@@ -372,7 +372,7 @@ class SmartBuffer {
    * @return this
    */
   insertBigInt64BE(value: bigint, offset: number): SmartBuffer {
-    bigIntAndBufferInt64Check('writeBigInt64BE');
+    bigIntAndBufferInt64Check('setBigInt64');
     return this._insertNumberValue(DataView.prototype.setBigInt64, BE, 8, value, offset);
   }
 
@@ -385,7 +385,7 @@ class SmartBuffer {
    * @return this
    */
   writeBigInt64LE(value: bigint, offset?: number): SmartBuffer {
-    bigIntAndBufferInt64Check('writeBigInt64LE');
+    bigIntAndBufferInt64Check('setBigInt64');
     return this._writeNumberValue(DataView.prototype.setBigInt64, LE, 8, value, offset);
   }
 
@@ -398,7 +398,7 @@ class SmartBuffer {
    * @return this
    */
   insertBigInt64LE(value: bigint, offset: number): SmartBuffer {
-    bigIntAndBufferInt64Check('writeBigInt64LE');
+    bigIntAndBufferInt64Check('setBigInt64');
     return this._insertNumberValue(DataView.prototype.setBigInt64, LE, 8, value, offset);
   }
 
@@ -461,7 +461,7 @@ class SmartBuffer {
    * @return { BigInt }
    */
   readBigUInt64BE(offset?: number): bigint {
-    bigIntAndBufferInt64Check('readBigUInt64BE');
+    bigIntAndBufferInt64Check('getBigUint64');
     return this._readNumberValue(DataView.prototype.getBigUint64, BE, 8, offset);
   }
 
@@ -472,7 +472,7 @@ class SmartBuffer {
    * @return { BigInt }
    */
   readBigUInt64LE(offset?: number): bigint {
-    bigIntAndBufferInt64Check('readBigUInt64LE');
+    bigIntAndBufferInt64Check('getBigUint64');
     return this._readNumberValue(DataView.prototype.getBigUint64, LE, 8, offset);
   }
 
@@ -605,7 +605,7 @@ class SmartBuffer {
    * @return this
    */
   writeBigUInt64BE(value: bigint, offset?: number): SmartBuffer {
-    bigIntAndBufferInt64Check('writeBigUInt64BE');
+    bigIntAndBufferInt64Check('setBigUint64');
     return this._writeNumberValue(DataView.prototype.setBigUint64, BE, 8, value, offset);
   }
 
@@ -618,7 +618,7 @@ class SmartBuffer {
    * @return this
    */
   insertBigUInt64BE(value: bigint, offset: number): SmartBuffer {
-    bigIntAndBufferInt64Check('writeBigUInt64BE');
+    bigIntAndBufferInt64Check('setBigUint64');
     return this._insertNumberValue(DataView.prototype.setBigUint64, BE, 8, value, offset);
   }
 
@@ -631,7 +631,7 @@ class SmartBuffer {
    * @return this
    */
   writeBigUInt64LE(value: bigint, offset?: number): SmartBuffer {
-    bigIntAndBufferInt64Check('writeBigUInt64LE');
+    bigIntAndBufferInt64Check('setBigUint64');
     return this._writeNumberValue(DataView.prototype.setBigUint64, LE, 8, value, offset);
   }
 
@@ -644,7 +644,7 @@ class SmartBuffer {
    * @return this
    */
   insertBigUInt64LE(value: bigint, offset: number): SmartBuffer {
-    bigIntAndBufferInt64Check('writeBigUInt64LE');
+    bigIntAndBufferInt64Check('setBigUint64');
     return this._insertNumberValue(DataView.prototype.setBigUint64, LE, 8, value, offset);
   }
 

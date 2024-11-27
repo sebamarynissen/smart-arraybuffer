@@ -218,13 +218,14 @@ interface Buffer {
 /**
  * Throws if Node.js version is too low to support bigint
  */
-function bigIntAndBufferInt64Check(bufferMethod: keyof Buffer) {
+type StringKeys = Extract<keyof DataView, string>;
+function bigIntAndBufferInt64Check(bufferMethod: StringKeys) {
   if (typeof BigInt === 'undefined') {
     throw new Error('Platform does not support JS BigInt type.');
   }
 
-  if (typeof Buffer.prototype[bufferMethod] === 'undefined') {
-    throw new Error(`Platform does not support Buffer.prototype.${bufferMethod}.`);
+  if (typeof DataView.prototype[bufferMethod] === 'undefined') {
+    throw new Error(`Platform does not support DataView.prototype.${bufferMethod}.`);
   }
 }
 
