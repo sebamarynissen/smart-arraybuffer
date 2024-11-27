@@ -24,8 +24,21 @@ const ERRORS = {
  * @param { String } encoding The encoding string to check.
  */
 function checkEncoding(encoding: BufferEncoding) {
-  if (!Buffer.isEncoding(encoding)) {
-    throw new Error(ERRORS.INVALID_ENCODING);
+  switch (String(encoding).toLowerCase()) {
+    case 'hex':
+    case 'utf8':
+    case 'utf-8':
+    case 'ascii':
+    case 'latin1':
+    case 'binary':
+    case 'base64':
+    case 'ucs2':
+    case 'ucs-2':
+    case 'utf16le':
+    case 'utf-16le':
+      return true
+    default:
+      return false
   }
 }
 
