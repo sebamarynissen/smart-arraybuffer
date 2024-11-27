@@ -1,8 +1,9 @@
 import {
   ERRORS, checkOffsetValue, checkLengthValue, checkTargetOffset,
-  checkEncoding, isFiniteInteger, bigIntAndBufferInt64Check,
+  isFiniteInteger, bigIntAndBufferInt64Check,
   toString, stringToUint8Array,
 } from './utils.js';
+import type { BufferEncoding } from './utils.js';
 
 /**
  * Helper function for converting a uint8 array to a node.js buffer without 
@@ -58,7 +59,6 @@ class SmartBuffer {
     if (SmartBuffer.isSmartBufferOptions(options)) {
       // Checks for encoding
       if (options.encoding) {
-        checkEncoding(options.encoding);
         this._encoding = options.encoding;
       }
 
@@ -811,11 +811,6 @@ class SmartBuffer {
       lengthVal = this.length - this._readOffset;
     }
 
-    // Check encoding
-    if (typeof encoding !== 'undefined') {
-      checkEncoding(encoding);
-    }
-
     const slice = this._buff.subarray(this._readOffset, this._readOffset + lengthVal);
     const value = toString(slice, encoding || this._encoding);
 
@@ -859,9 +854,6 @@ class SmartBuffer {
    * @return { String }
    */
   readStringNT(encoding?: BufferEncoding): string {
-    if (typeof encoding !== 'undefined') {
-      checkEncoding(encoding);
-    }
 
     // Set null character position to the end SmartBuffer instance.
     let nullPos = this.length;
@@ -1180,8 +1172,6 @@ class SmartBuffer {
    * @param encoding { BufferEncoding } The string Buffer encoding to set.
    */
   set encoding(encoding: BufferEncoding) {
-    checkEncoding(encoding);
-
     this._encoding = encoding;
   }
 
@@ -1229,9 +1219,6 @@ class SmartBuffer {
    */
   toString(encoding?: BufferEncoding): string {
     const encodingVal = typeof encoding === 'string' ? encoding : this._encoding;
-
-    // Check for invalid encoding.
-    checkEncoding(encodingVal);
     return toString(this._buff.subarray(0, this.length), encoding);
   }
 
@@ -1265,13 +1252,11 @@ class SmartBuffer {
       offsetVal = arg3;
       // Check for encoding
     } else if (typeof arg3 === 'string') {
-      checkEncoding(arg3);
       encodingVal = arg3;
     }
 
     // Check for encoding (third param)
     if (typeof encoding === 'string') {
-      checkEncoding(encoding);
       encodingVal = encoding;
     }
 
@@ -1428,11 +1413,11 @@ class SmartBuffer {
       }
       this._buff = new Uint8Array(newLength);
 
-      this._buff.set(data.subarray(0, oldLength), 0);
+      this._buff.set(data.subarray(0, oldLength));
       this._view = new DataView(
         this._buff.buffer,
         this._buff.byteOffset,
-        this._buff.byteOffset,
+        newLength,
       );
     }
   }

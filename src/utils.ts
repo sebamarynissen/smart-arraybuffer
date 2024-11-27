@@ -1,10 +1,12 @@
 import type { SmartBuffer } from './smart-arraybuffer.js';
 
+export type BufferEncoding = string;
+
 /**
  * Error strings
  */
 const ERRORS = {
-  INVALID_ENCODING: 'Invalid encoding provided. Please specify a valid encoding the internal Node.js Buffer supports.',
+  INVALID_ENCODING: 'Invalid encoding provided. Please specify a valid encoding of utf8, utf-8, ascii, latin, hex, base64 or binary.',
   INVALID_SMARTBUFFER_SIZE: 'Invalid size provided. Size must be a valid integer greater than zero.',
   INVALID_SMARTBUFFER_BUFFER: 'Invalid Buffer provided in SmartBufferOptions.',
   INVALID_SMARTBUFFER_OBJECT: 'Invalid SmartBufferOptions object supplied to SmartBuffer constructor or factory methods.',
@@ -17,30 +19,6 @@ const ERRORS = {
   INVALID_READ_BEYOND_BOUNDS: 'Attempted to read beyond the bounds of the managed data.',
   INVALID_WRITE_BEYOND_BOUNDS: 'Attempted to write beyond the bounds of the managed data.'
 };
-
-/**
- * Checks if a given encoding is a valid Buffer encoding. (Throws an exception if check fails)
- *
- * @param { String } encoding The encoding string to check.
- */
-function checkEncoding(encoding: BufferEncoding) {
-  switch (String(encoding).toLowerCase()) {
-    case 'hex':
-    case 'utf8':
-    case 'utf-8':
-    case 'ascii':
-    case 'latin1':
-    case 'binary':
-    case 'base64':
-    case 'ucs2':
-    case 'ucs-2':
-    case 'utf16le':
-    case 'utf-16le':
-      return true
-    default:
-      return false
-  }
-}
 
 /**
  * Checks if a given number is a finite integer. (Throws an exception if check fails)
@@ -200,11 +178,15 @@ function stringToUint8Array(text: string, encoding: BufferEncoding): Uint8Array 
     return binaryToUint8Array(text);
   }
 
-  // Any format other than utf8 (or utf-8) is not supported.
-  if (encoding !== 'utf8' && encoding !== 'utf-8' && encoding !== 'ascii') {
-    throw new Error(`${encoding} encoding is not supported!`);
+  switch (encoding) {
+    case 'utf8':
+    case 'utf-8':
+    case 'latin1':
+    case 'ascii':
+      return new TextEncoder().encode(text);
+    default:
+      throw new Error(ERRORS.INVALID_ENCODING);
   }
-
   return new TextEncoder().encode(text);
 }
 
@@ -243,7 +225,7 @@ function bigIntAndBufferInt64Check(bufferMethod: StringKeys) {
 }
 
 export {
-  ERRORS, isFiniteInteger, checkEncoding, checkOffsetValue,
+  ERRORS, isFiniteInteger, checkOffsetValue,
   checkLengthValue, checkTargetOffset, bigIntAndBufferInt64Check,
   toString, stringToUint8Array,
 };

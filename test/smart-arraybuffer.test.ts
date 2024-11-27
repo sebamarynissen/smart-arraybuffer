@@ -111,13 +111,6 @@ describe('Constructing a SmartBuffer', () => {
       assert.strictEqual(sbuff.internalArrayBuffer.byteLength, 4096);
     });
 
-    it('should throw an error when given an options object with an invalid encoding', () => {
-      assert.throws(() => {
-        // tslint:disable-next-line:no-unused-variable
-        const sbuff = SmartBuffer.fromOptions(invalidOptions1);
-      });
-    });
-
     it('should throw an error when given an options object with an invalid size', () => {
       assert.throws(() => {
         // tslint:disable-next-line:no-unused-variable
@@ -150,19 +143,24 @@ describe('Constructing a SmartBuffer', () => {
       }, Error);
     });
 
-    it('should throw an exception when give a invalid encoding', () => {
+    it('should throw an exception when writing with an invalid encoding', () => {
       assert.throws(() => {
-        const invalidEncoding: any = 'invalid';
-        // tslint:disable-next-line:no-unused-variable
-        const reader = SmartBuffer.fromOptions({
-          encoding: invalidEncoding
-        });
+        const writer = new SmartBuffer();
+        writer.writeStringNT('This does not work', 'blablabla');
       }, Error);
+    });
 
+    it('should not throw an exception when reading with utf-16le encoding', () => {
+      const buffer = Buffer.from('Hello', 'utf-16le');
+      const reader = SmartBuffer.fromBuffer(buffer);
+      const str = reader.readString('utf-16le');
+      expect(str).to.equal('Hello');
+    });
+
+    it('should throw an exception when writing with utf-16le encoding', () => {
       assert.throws(() => {
-        const invalidEncoding: any = 'invalid';
-        // tslint:disable-next-line:no-unused-variable
-        const reader = SmartBuffer.fromSize(1024, invalidEncoding);
+        const writer = new SmartBuffer();
+        writer.writeString('This does not work', 'utf16-le');
       }, Error);
     });
 
@@ -722,18 +720,27 @@ describe('Setting encoding', () => {
 });
 
 describe('Automatic internal buffer resizing', () => {
-  let writer = new SmartBuffer();
+
+  it('Should properly increase capacity', () => {
+
+    const writer = SmartBuffer.fromSize(2);
+    writer.writeUInt8(1);
+    writer.writeUInt8(2);
+    writer.writeUInt8(3);
+    expect(writer).to.have.length(3);
+
+  });
 
   it('Should not throw an error when adding data that is larger than current buffer size (internal resize algo fails)', () => {
     let str = 'String larger than one byte';
-    writer = SmartBuffer.fromSize(1);
+    const writer = SmartBuffer.fromSize(1);
     writer.writeString(str);
 
     assert.strictEqual(writer.internalArrayBuffer.byteLength, str.length);
   });
 
   it('Should not throw an error when adding data that is larger than current buffer size (internal resize algo succeeds)', () => {
-    writer = SmartBuffer.fromSize(100);
+    const writer = SmartBuffer.fromSize(100);
     let buff = new Buffer(105);
 
     writer.writeBuffer(buff);
@@ -882,12 +889,4 @@ describe('utils', () => {
     });
   });
 
-  describe('checkEncoding', () => {
-    it('should throw an exception if a given string is not a valid BufferEncoding', () => {
-      assert.throws(() => {
-        const invalidEncoding: any = 'sdfdf';
-        checkEncoding(invalidEncoding);
-      });
-    });
-  });
 });
