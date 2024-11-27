@@ -31,17 +31,15 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "devDependencies": {
-    "@types/chai": "4.1.7",
+    "@types/chai": "^5.0.1",
     "@types/mocha": "^10.0.10",
     "@types/node": "^22.10.0",
     "chai": "^5.1.2",
-    "coveralls": "3.0.5",
     "cross-env": "^7.0.3",
     "istanbul": "^0.4.5",
     "mocha": "^10.8.2",
     "mocha-lcov-reporter": "^1.3.0",
-    "source-map-support": "0.5.12",
-    "tslint": "5.18.0",
+    "tslint": "^6.1.3",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2"
   },
@@ -50,7 +48,7 @@
   "scripts": {
     "prepublish": "npm install -g typescript && npm run build",
     "test": "cross-env NODE_ENV=test mocha --recursive test/**/*.ts",
-    "lint": "tslint --type-check --project tsconfig.json 'src/**/*.ts'",
+    "lint": "tslint --project tsconfig.json 'src/**/*.ts'",
     "build": "tsc -p ./"
   },
   "mocha": {
