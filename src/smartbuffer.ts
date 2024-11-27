@@ -1,8 +1,22 @@
 import {
   ERRORS, checkOffsetValue, checkLengthValue, checkTargetOffset,
   checkEncoding, isFiniteInteger, bigIntAndBufferInt64Check,
-  toString, toBuffer,
+  toString,
 } from './utils';
+
+/**
+ * Helper function for converting a uint8 array to a node.js buffer without 
+ * copying the data. This means that we work on the same underlying arraybuffer.
+ * 
+ * @param { Uint8Array } array
+ * @return { Buffer }
+ */
+function toBuffer(array: Uint8Array): Buffer {
+  if (typeof Buffer === 'undefined') {
+    throw new Error('Platform does not provide a Buffer global.');
+  }
+  return Buffer.from(array.buffer, array.byteOffset, array.byteLength);
+}
 
 /**
  * Object interface for constructing new SmartBuffer instances.
@@ -1161,6 +1175,16 @@ class SmartBuffer {
    */
   toBuffer(): Buffer {
     return toBuffer(this.toUint8Array());
+  }
+
+  /**
+   * Gets the value of the internal managed Uint8Array as ArrayBuffer.
+   */
+  toArrayBuffer(): ArrayBuffer {
+    const arrayBuffer = new ArrayBuffer(this._buff.byteLength);
+    const view = new Uint8Array(arrayBuffer);
+    view.set(this._buff);
+    return arrayBuffer;
   }
 
   /**

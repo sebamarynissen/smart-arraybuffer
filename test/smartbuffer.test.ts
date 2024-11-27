@@ -639,6 +639,24 @@ describe('Skipping around data', () => {
   });
 });
 
+describe('Converting to an ArrayBuffer', () => {
+
+  let ab = new ArrayBuffer(5);
+  let buff = new Uint8Array(ab, 1);
+  buff[1] = 0x01;
+  buff[2] = 0x02;
+  let writer = new SmartBuffer({ buff });
+
+  it('should take into account byte offsets in the buffer', () => {
+    let ab = writer.toArrayBuffer();
+    assert.equal(ab.byteLength, 4);
+    let view = new Uint8Array(ab);
+    assert.equal(view[1], 0x01);
+    assert.equal(view[2], 0x02);
+  });
+
+});
+
 describe('Setting write and read offsets', () => {
   const writer = SmartBuffer.fromSize(100);
   writer.writeString('hellotheremynameisjosh');

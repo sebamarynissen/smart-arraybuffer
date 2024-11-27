@@ -1,5 +1,4 @@
 import { SmartBuffer } from './smartbuffer';
-import { Buffer } from 'buffer';
 
 /**
  * Error strings
@@ -100,20 +99,6 @@ function toString(buffer: Uint8Array, encoding : BufferEncoding):string {
 }
 
 /**
- * Helper function for converting a uint8 array to a node.js buffer without 
- * copying the data. This means that we work on the same underlying arraybuffer.
- * 
- * @param { Uint8Array } array
- * @return { Buffer }
- */
-function toBuffer(array: Uint8Array) {
-  if (typeof Buffer === 'undefined') {
-    throw new Error('Platform does not provide a Buffer global.');
-  }
-  return Buffer.from(array.buffer, array.byteOffset, array.byteLength);
-}
-
-/**
  * Determines whether a given number is a integer.
  * @param value The number to check.
  */
@@ -149,5 +134,5 @@ function bigIntAndBufferInt64Check(bufferMethod: keyof Buffer) {
 export {
   ERRORS, isFiniteInteger, checkEncoding, checkOffsetValue,
   checkLengthValue, checkTargetOffset, bigIntAndBufferInt64Check,
-  toString, toBuffer
+  toString
 };
