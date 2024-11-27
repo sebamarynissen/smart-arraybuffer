@@ -954,14 +954,14 @@ class SmartBuffer {
   }
 
   /**
-   * Writes a Buffer to the current write position.
+   * Writes a Uint8Array to the current write position.
    *
-   * @param value { Uint8Array } The Buffer to write.
-   * @param offset { Number } The offset to write the Buffer to.
+   * @param value { Uint8Array } The Uint8Array to write.
+   * @param offset { Number } The offset to write the Uint8Array to.
    *
    * @return this
    */
-  insertBuffer(value: Uint8Array, offset: number): SmartBuffer {
+  insertUint8Array(value: Uint8Array, offset: number): SmartBuffer {
     checkOffsetValue(offset);
 
     return this._handleBuffer(value, true, offset);
@@ -975,8 +975,32 @@ class SmartBuffer {
    *
    * @return this
    */
-  writeBuffer(value: Uint8Array, offset?: number): SmartBuffer {
+  insertBuffer(value: Uint8Array, offset: number): SmartBuffer {
+    return this.insertUint8Array(value, offset);
+  }
+
+  /**
+   * Writes a Uint8Array to the current write position.
+   *
+   * @param value { Uint8Array } The Uint8Array to write
+   * @param offset { Number } The offset to write the Uint8Array to.
+   *
+   * @return this
+   */
+  writeUint8Array(value: Uint8Array, offset?: number): SmartBuffer {
     return this._handleBuffer(value, false, offset);
+  }
+
+  /**
+   * Writes a Buffer to the current write position.
+   *
+   * @param value { Buffer } The Buffer to write.
+   * @param offset { Number } The offset to write the Buffer to.
+   *
+   * @return this
+   */
+  writeBuffer(value: Uint8Array, offset?: number): SmartBuffer {
+    return this.writeUint8Array(value, offset);
   }
 
   /**
@@ -1014,14 +1038,14 @@ class SmartBuffer {
   }
 
   /**
-   * Inserts a null-terminated Buffer.
+   * Inserts a null-terminated Uint8Array.
    *
    * @param value { Uint8Array } The Buffer to write.
    * @param offset { Number } The offset to write the Buffer to.
    *
    * @return this
    */
-  insertBufferNT(value: Uint8Array, offset: number): SmartBuffer {
+  insertUint8ArrayNT(value: Uint8Array, offset: number): SmartBuffer {
     checkOffsetValue(offset);
 
     // Write Values
@@ -1032,14 +1056,26 @@ class SmartBuffer {
   }
 
   /**
-   * Writes a null-terminated Buffer.
+   * Inserts a null-terminated Buffer.
    *
    * @param value { Uint8Array } The Buffer to write.
    * @param offset { Number } The offset to write the Buffer to.
    *
    * @return this
    */
-  writeBufferNT(value: Uint8Array, offset?: number): SmartBuffer {
+  insertBufferNT(value: Uint8Array, offset: number): SmartBuffer {
+    return this.insertUint8ArrayNT(value, offset);
+  }
+
+  /**
+   * Writes a null-terminated Uint8Array.
+   *
+   * @param value { Uint8Array } The Buffer to write.
+   * @param offset { Number } The offset to write the Buffer to.
+   *
+   * @return this
+   */
+  writeUint8ArrayNT(value: Uint8Array, offset?: number): SmartBuffer {
     // Checks for valid numberic value;
     if (typeof offset !== 'undefined') {
       checkOffsetValue(offset);
@@ -1050,6 +1086,18 @@ class SmartBuffer {
     this.writeUInt8(0x00, typeof offset === 'number' ? offset + value.length : this._writeOffset);
 
     return this;
+  }
+
+  /**
+   * Writes a null-terminated Buffer.
+   *
+   * @param value { Buffer } The Buffer to write.
+   * @param offset { Number } The offset to write the Buffer to.
+   *
+   * @return this
+   */
+  writeBufferNT(value: Uint8Array, offset?: number): SmartBuffer {
+    return this.writeUint8ArrayNT(value, offset);
   }
 
   /**
