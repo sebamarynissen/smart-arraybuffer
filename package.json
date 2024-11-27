@@ -7,9 +7,6 @@
     ".": "./dist/smart-arraybuffer.js"
   },
   "type": "module",
-  "contributors": [
-    "syvita"
-  ],
   "homepage": "https://github.com/sebamarynissen/smart-arraybuffer/",
   "repository": {
     "type": "git",
