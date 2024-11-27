@@ -27,7 +27,7 @@ interface SmartBufferOptions {
   // The initial size of the internal Buffer.
   size?: number;
   // If a Uint8Array is provided, this value will be used as the internal Buffer.
-  buff?: Uint8Array;
+  buff?: Uint8Array | ArrayBuffer;
 }
 
 // The default Buffer size if one is not provided.

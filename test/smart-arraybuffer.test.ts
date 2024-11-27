@@ -31,6 +31,18 @@ describe('Constructing a SmartBuffer', () => {
     });
   });
 
+  describe('Constructing from an ArrayBuffer', () => {
+
+    it('should use the underlying arraybuffer', () => {
+      const buff = new ArrayBuffer(4);
+      const view = new DataView(buff);
+      view.setUint32(0, 10, true);
+      const reader = SmartBuffer.fromBuffer(buff);
+      expect(reader.readUInt32LE()).to.equal(10);
+    });
+
+  });
+
   describe('Constructing with a specified size', () => {
     const size = 128;
     const reader = SmartBuffer.fromSize(size);
