@@ -1,6 +1,7 @@
 import {
   ERRORS, checkOffsetValue, checkLengthValue, checkTargetOffset,
-  checkEncoding, isFiniteInteger, bigIntAndBufferInt64Check
+  checkEncoding, isFiniteInteger, bigIntAndBufferInt64Check,
+  toString, toBuffer,
 } from './utils';
 
 /**
@@ -11,8 +12,8 @@ interface SmartBufferOptions {
   encoding?: BufferEncoding;
   // The initial size of the internal Buffer.
   size?: number;
-  // If a Buffer is provided, this Buffer's value will be used as the internal Buffer.
-  buff?: Buffer;
+  // If a Uint8Array is provided, this value will be used as the internal Buffer.
+  buff?: Uint8Array;
 }
 
 // The default Buffer size if one is not provided.
@@ -29,7 +30,7 @@ class SmartBuffer {
   public length: number = 0;
 
   private _encoding: BufferEncoding = DEFAULT_SMARTBUFFER_ENCODING;
-  private _buff: Buffer;
+  private _buff: Uint8Array;
   private _writeOffset: number = 0;
   private _readOffset: number = 0;
 
@@ -55,7 +56,7 @@ class SmartBuffer {
         }
         // Check for initial Buffer
       } else if (options.buff) {
-        if (Buffer.isBuffer(options.buff)) {
+        if (options.buff instanceof Uint8Array) {
           this._buff = options.buff;
           this.length = options.buff.length;
         } else {
@@ -98,7 +99,7 @@ class SmartBuffer {
    *
    * @return { SmartBuffer }
    */
-  public static fromBuffer(buff: Buffer, encoding?: BufferEncoding): SmartBuffer {
+  public static fromBuffer(buff: Uint8Array, encoding?: BufferEncoding): SmartBuffer {
     return new this({
       buff: buff,
       encoding: encoding
@@ -787,7 +788,8 @@ class SmartBuffer {
       checkEncoding(encoding);
     }
 
-    const value = this._buff.slice(this._readOffset, this._readOffset + lengthVal).toString(encoding || this._encoding);
+    const slice = this._buff.subarray(this._readOffset, this._readOffset + lengthVal);
+    const value = toString(slice, encoding || this._encoding);
 
     this._readOffset += lengthVal;
     return value;
@@ -850,7 +852,7 @@ class SmartBuffer {
     // Increment internal Buffer read offset
     this._readOffset = nullPos + 1;
 
-    return value.toString(encoding || this._encoding);
+    return toString(value, encoding || this._encoding);
   }
 
   /**
@@ -890,13 +892,13 @@ class SmartBuffer {
   // Buffers
 
   /**
-   * Reads a Buffer from the internal read position.
+   * Reads a Uint8Array from the internal read position.
    *
    * @param length { Number } The length of data to read as a Buffer.
    *
-   * @return { Buffer }
+   * @return { Uint8Array }
    */
-  readBuffer(length?: number): Buffer {
+  readUint8Array(length?: number): Uint8Array {
     if (typeof length !== 'undefined') {
       checkLengthValue(length);
     }
@@ -910,6 +912,17 @@ class SmartBuffer {
     // Increment internal Buffer read offset
     this._readOffset = endPoint;
     return value;
+  }
+
+  /**
+   * Reads a Node.js Buffer from the internal read position.
+   *
+   * @param length { Number } The length of data to read as a Buffer.
+   *
+   * @return { Buffer }
+   */
+  readBuffer(length?: number): Buffer {
+    return toBuffer(this.readUint8Array(length));
   }
 
   /**
@@ -939,11 +952,11 @@ class SmartBuffer {
   }
 
   /**
-   * Reads a null-terminated Buffer from the current read poisiton.
+   * Reads a null-terminated Uint8Array from the current read poisiton.
    *
-   * @return { Buffer }
+   * @return { Uint8Array }
    */
-  readBufferNT(): Buffer {
+  readUint8ArrayNT(): Uint8Array {
     // Set null character position to the end SmartBuffer instance.
     let nullPos = this.length;
 
@@ -961,6 +974,15 @@ class SmartBuffer {
     // Increment internal Buffer read offset
     this._readOffset = nullPos + 1;
     return value;
+  }
+
+  /**
+   * Reads a null-terminated Buffer from the current read poisiton.
+   *
+   * @return { Buffer }
+   */
+  readBufferNT(): Buffer {
+    return toBuffer(this.readUint8ArrayNT());
   }
 
   /**
@@ -1088,12 +1110,37 @@ class SmartBuffer {
   }
 
   /**
-   * Gets the underlying internal Buffer. (This includes unmanaged data in the Buffer)
+   * Gets the underlying internal Uint8Array. (This includes unmanaged data)
+   *
+   * @return { Uint8Array } The Uint8Array value.
+   */
+  get internalUint8Array(): Uint8Array {
+    return this._buff;
+  }
+
+  /**
+   * Gets the underlying internal Buffer. (This includes unmanaged data)
+   * Note that this is an alias for internalUint8Array for backwards 
+   * compatibility. However, if the SmartBuffer was not constructed with an 
+   * actual Node.js buffer, then this function throws.
    *
    * @return { Buffer } The Buffer value.
    */
   get internalBuffer(): Buffer {
-    return this._buff;
+    if (
+      typeof (this._buff as Buffer).constructor.isBuffer === 'function' &&
+      (this._buff as Buffer).constructor.isBuffer(this._buff)
+    ) return this._buff;
+    return toBuffer(this._buff);
+  }
+
+  /**
+   * Gets the value of the internal managed Uint8Array (Includes managed data only)
+   *
+   * @param { Uint8Array }
+   */
+  toUint8Array(): Uint8Array {
+    return this._buff.subarray(0, this.length);
   }
 
   /**
@@ -1102,7 +1149,7 @@ class SmartBuffer {
    * @param { Buffer }
    */
   toBuffer(): Buffer {
-    return this._buff.subarray(0, this.length);
+    return toBuffer(this.toUint8Array());
   }
 
   /**
@@ -1115,8 +1162,7 @@ class SmartBuffer {
 
     // Check for invalid encoding.
     checkEncoding(encodingVal);
-
-    return this._buff.toString(encodingVal, 0, this.length);
+    return toString(this._buff.subarray(0, this.length), encoding);
   }
 
   /**
@@ -1265,7 +1311,8 @@ class SmartBuffer {
 
     // If an offset was provided and its not the very end of the buffer, copy data into appropriate location in regards to the offset.
     if (offset < this.length) {
-      this._buff.copy(this._buff, offset + dataLength, offset, this._buff.length);
+      // this._buff.copy(this._buff, offset + dataLength, offset, this._buff.length);
+      this._buff.set(this._buff.subarray(offset, this.length), offset + dataLength) ;
     }
 
     // Adjust tracked smart buffer length
@@ -1308,9 +1355,9 @@ class SmartBuffer {
       if (newLength < minLength) {
         newLength = minLength;
       }
-      this._buff = Buffer.allocUnsafe(newLength);
+      this._buff = new Uint8Array(newLength);
 
-      data.copy(this._buff, 0, 0, oldLength);
+      this._buff.set(data.subarray(0, oldLength), 0);
     }
   }
 

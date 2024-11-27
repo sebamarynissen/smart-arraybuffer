@@ -87,6 +87,30 @@ function checkTargetOffset(offset: number, buff: SmartBuffer) {
 }
 
 /**
+ * @param { Uint8Array } buffer The uint8array to stringify
+ * @param { BufferEncoding } encoding The encoding to use when stringifying
+ * @return { string }
+ */
+function toString(buffer: Uint8Array, encoding : BufferEncoding):string {
+  
+  // Note: for now we only support utf-8 encoding. We'll change that though.
+  const decoder = new TextDecoder();
+  return decoder.decode(buffer);
+
+}
+
+/**
+ * Helper function for converting a uint8 array to a node.js buffer without 
+ * copying the data. This means that we work on the same underlying arraybuffer.
+ * 
+ * @param { Uint8Array } array
+ * @return { Buffer }
+ */
+function toBuffer(array: Uint8Array) {
+  return Buffer.from(array.buffer, array.byteOffset, array.byteLength);
+}
+
+/**
  * Determines whether a given number is a integer.
  * @param value The number to check.
  */
@@ -121,5 +145,6 @@ function bigIntAndBufferInt64Check(bufferMethod: keyof Buffer) {
 
 export {
   ERRORS, isFiniteInteger, checkEncoding, checkOffsetValue,
-  checkLengthValue, checkTargetOffset, bigIntAndBufferInt64Check
+  checkLengthValue, checkTargetOffset, bigIntAndBufferInt64Check,
+  toString, toBuffer
 };

@@ -4,17 +4,18 @@ import { assert } from 'chai';
 import 'mocha';
 
 describe('Constructing a SmartBuffer', () => {
-  describe('Constructing with an existing Buffer', () => {
-    const buff = new Buffer([0xaa, 0xbb, 0xcc, 0xdd, 0xff, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99]);
+  describe('Constructing with an existing Uint8Array', () => {
+    const buff = new Uint8Array([0xaa, 0xbb, 0xcc, 0xdd, 0xff, 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99]);
     const reader = SmartBuffer.fromBuffer(buff);
 
-    it('should have the exact same internal Buffer when constructed with a Buffer', () => {
-      assert.strictEqual(reader.internalBuffer, buff);
+    it('should have the exact same internal Uint8Array when constructed with a Buffer', () => {
+      assert.strictEqual(reader.internalUint8Array, buff);
     });
 
-    it('should return a buffer with the same content', () => {
-      assert.deepEqual(reader.toBuffer(), buff);
+    it('should return a Uint8Array with the same content', () => {
+      assert.deepEqual(reader.toUint8Array(), buff);
     });
+
   });
 
   describe('Constructing with an existing Buffer and setting the encoding', () => {
