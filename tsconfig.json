@@ -1,6 +1,6 @@
 {
     "compilerOptions": {
-        "outDir": "./build",
+        "outDir": "./dist",
         "rootDir": "./src",
         "module": "nodenext",
         "moduleDetection": "force",
@@ -19,7 +19,7 @@
     "exclude": [
       "node_modules",
       ".idea",
-      "build",
+      "dist",
       "typings",
       "test"
     ]
