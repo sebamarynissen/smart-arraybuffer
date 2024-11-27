@@ -1,60 +1,44 @@
-smart-buffer  [![Build Status](https://travis-ci.org/JoshGlazebrook/smart-buffer.svg?branch=master)](https://travis-ci.org/JoshGlazebrook/smart-buffer)  [![Coverage Status](https://coveralls.io/repos/github/JoshGlazebrook/smart-buffer/badge.svg?branch=master)](https://coveralls.io/github/JoshGlazebrook/smart-buffer?branch=master)
+smart-arraybuffer
 =============
 
-smart-buffer is a Buffer wrapper that adds automatic read & write offset tracking, string operations, data insertions, and more.
-
-![stats](https://nodei.co/npm/smart-buffer.png?downloads=true&downloadRank=true&stars=true "stats")
+smart-arraybuffer is a fork of [smart-buffer](https://www.npmjs.com/package/smart-buffer) that does not rely on the presence of a `Buffer` global, but uses an `ArrayBuffer` combined with `DataView` instead.
+It therefore works in the browser without needing a polyfill like [buffer for the browser](https://www.npmjs.com/package/buffer).
+I was inspired to create this module by [this post](https://sindresorhus.com/blog/goodbye-nodejs-buffer) from Sindre Sorhus as I saw that something like that was not available yet.
 
 **Key Features**:
-* Proxies all of the Buffer write and read functions
-* Keeps track of read and write offsets automatically
-* Grows the internal Buffer as needed
-* Useful string operations. (Null terminating strings)
-* Allows for inserting values at specific points in the Buffer
-* Built in TypeScript
-* Type Definitions Provided
-* Browser Support (using Webpack/Browserify)
-* Full test coverage
+ - Has the exact same api and features as [smart-buffer](https://www.npmjs.com/package/smart-buffer) so it can be used as a drop-in replacement in most cases (see below).
+ - Browser support without the need for a polyfill
+ - [ESM-only](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c). Use `--experimental-require-module`, or dynamic `import()` if you're still on cjs.
 
 **Requirements**:
-* Node v4.0+ is supported at this time.  (Versions prior to 2.0 will work on node 0.10)
-
-
-
-## Breaking Changes in v4.0
-
-* Old constructor patterns have been completely removed. It's now required to use the SmartBuffer.fromXXX() factory constructors.
-* rewind(), skip(), moveTo() have been removed. (see [offsets](#offsets))
-* Internal private properties are now prefixed with underscores (_)
-* **All** writeXXX() methods that are given an offset will now **overwrite data** instead of insert. (see [write vs insert](#write-vs-insert))
-* insertXXX() methods have been added for when you want to insert data at a specific offset (this replaces the old behavior of writeXXX() when an offset was provided)
-
-
-## Looking for v3 docs?
-
-Legacy documentation for version 3 and prior can be found [here](https://github.com/JoshGlazebrook/smart-buffer/blob/master/docs/README_v3.md).
+ - Node v18+. It may work on lower versions, but no support for non-LTS versions is guaranteed.
 
 ## Installing:
 
-`yarn add smart-buffer`
-
-or
-
-`npm install smart-buffer`
+`npm install smart-arraybuffer`
 
 Note: The published NPM package includes the built javascript library.
 If you cloned this repo and wish to build the library manually use:
 
 `npm run build`
 
-## Using smart-buffer
+## Key differences from [smart-buffer](https://www.npmjs.com/package/smart-buffer)
+
+While smart-arraybuffer has almost the exact same api as the original [smart-buffer](https://www.npmjs.com/package/smart-buffer) package, there are a few things you need to be aware of if you want to use it as a drop-in replacement:
+
+ - The property `.internalBuffer` is not available. It has been replaced by `.internalArrayBuffer`, which returns the underlying `ArrayBuffer` instance instead of the underlying `Buffer` instance. If you were relying on `.internalBuffer`, you cannot use it as a drop-in replacement.
+ - The `.writeString()` functions don't support all encodings that `Buffer` does, only `utf8`, `utf-8`, `ascii`, `base64`, `hex` and `binary` are supported. This is because the module relies on [TextEncoder](https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder) to perform the encoding, which only supports utf8. Given that `base64`, `hex` and `binary` are so common, they have been implemented manually. If you need support for other encodings, like `utf-16le`, then you still need to work with Node's native Buffer, which kind of defeats the purpose of this module. On the upside, the `.readString()` methods support all encodings that [TextDecoder](https://developer.mozilla.org/en-US/docs/Web/API/Encoding_API/Encodings) supports, which is a lot more than what Node's Buffer does.
+ - Adds a bunch of new methods like `.toArrayBuffer()`, `.toUint8Array()`, `.readUint8Array()`, `.writeUint8Array()` were added that are meant to replace their buffer equivalents.
+ - If you're working in Node.js - meaning the `Buffer` global is available - then you can still use the buffer methods (`.toBuffer()`, `.readBuffer()`, `writeBuffer()` etc.). However, doing so kind of defeats the purpose of the module, but it may help for incrementally [migrating away from Node.js buffer](https://sindresorhus.com/blog/goodbye-nodejs-buffer): just keep using `.toBuffer()` where the calling code actually needs a Node.js buffer, and use `.toUint8Array()` or `.toArrayBuffer()` where already possible.
+
+## Using smart-arraybuffer
 
 ```javascript
 // Javascript
-const SmartBuffer = require('smart-buffer').SmartBuffer;
+import { SmartBuffer } from 'smart-arraybuffer';
 
 // Typescript
-import { SmartBuffer, SmartBufferOptions} from 'smart-buffer';
+import { SmartBuffer, SmartBufferOptions} from 'smart-arraybuffer';
 ```
 
 ### Simple Example
@@ -75,14 +59,14 @@ function createLoginPacket(username, password, age, country) {
     packet.writeStringNT(country);
     packet.insertUInt16LE(packet.length - 2, 2);
 
-    return packet.toBuffer();
+    return packet.toArrayBuffer();
 }
 ```
 With the above function, you now can do this:
 ```javascript
 const login = createLoginPacket("Josh", "secret123", 22, "United States");
 
-// <Buffer 60 00 1e 00 4a 6f 73 68 00 73 65 63 72 65 74 31 32 33 00 16 55 6e 69 74 65 64 20 53 74 61 74 65 73 00>
+// ArrayBuffer { [Uint8Contents]: <60 00 1e 00 4a 6f 73 68 00 73 65 63 72 65 74 31 32 33 00 16 55 6e 69 74 65 64 20 53 74 61 74 65 73 00>, byteLength: 34 }
 ```
 Notice that the `[PacketLength:2]` value (1e 00) was inserted at position 2.
 
@@ -111,39 +95,6 @@ const logininfo = {
 }
 */
 ```
-
-
-## Write vs Insert
-In prior versions of SmartBuffer, .writeXXX(value, offset) calls would insert data when an offset was provided. In version 4, this will now overwrite the data at the offset position. To insert data there are now corresponding .insertXXX(value, offset) methods.
-
-**SmartBuffer v3**:
-```javascript
-const buff = SmartBuffer.fromBuffer(new Buffer([1,2,3,4,5,6]));
-buff.writeInt8(7, 2);
-console.log(buff.toBuffer())
-
-// <Buffer 01 02 07 03 04 05 06>
-```
-
-**SmartBuffer v4**:
-```javascript
-const buff = SmartBuffer.fromBuffer(new Buffer([1,2,3,4,5,6]));
-buff.writeInt8(7, 2);
-console.log(buff.toBuffer());
-
-// <Buffer 01 02 07 04 05 06>
-```
-
-To insert you instead should use:
-```javascript
-const buff = SmartBuffer.fromBuffer(new Buffer([1,2,3,4,5,6]));
-buff.insertInt8(7, 2);
-console.log(buff.toBuffer());
-
-// <Buffer 01 02 07 03 04 05 06>
-```
-
-**Note:** Insert/Writing to a position beyond the currently tracked internal Buffer will zero pad to your offset.
 
 ## Constructing a smart-buffer
 
