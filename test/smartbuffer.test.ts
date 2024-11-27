@@ -809,7 +809,7 @@ describe('ensureWritable()', () => {
   it('should increase the internal buffer size to accomodate given size.', () => {
     sbuff._ensureWriteable(100);
 
-    assert.strictEqual(sbuff.internalBuffer.length >= 100, true);
+    assert.strictEqual(sbuff.internalUint8Array.length >= 100, true);
   });
 });
 

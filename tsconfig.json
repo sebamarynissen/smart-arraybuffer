@@ -1,22 +1,21 @@
 {
-   "compileOnSave": true,
     "compilerOptions": {
-        "target": "es2020",
-        "module": "commonjs",
+        "outDir": "./build",
+        "rootDir": "./src",
+        "module": "nodenext",
+        "moduleDetection": "force",
+        "target": "es2022",
+
+        // other best practice configs
+        "moduleResolution": "nodenext",
+        "noImplicitAny": false,
+        "removeComments": false,
+        "composite": true,
+        "resolveJsonModule": true,
         "sourceMap": true,
-        "moduleResolution": "node",
-        "outDir": "build",
-        "declaration": true,
-        "declarationDir": "typings",
-        "removeComments":false,
-        "noImplicitAny": true,
-        "typeRoots": [
-            "node_modules/@types"
-        ]
+        "isolatedModules": false,
+        "declaration": true
     },
-    "include": [
-        "src/**/*.ts"
-    ],
     "exclude": [
       "node_modules",
       ".idea",
