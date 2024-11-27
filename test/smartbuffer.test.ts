@@ -734,17 +734,26 @@ describe('Clearing the buffer', () => {
 
 describe('Displaying the buffer as a string', () => {
   let buff = new Buffer([1, 2, 3, 4]);
-  let sbuff = SmartBuffer.fromBuffer(buff);
-
-  let str = buff.toString();
-  let str64 = buff.toString('binary');
+  let sbuff = SmartBuffer.fromBuffer(new Uint8Array(buff));
 
   it('Should return a valid string representing the internal buffer', () => {
+    let str = buff.toString();
     assert.strictEqual(str, sbuff.toString());
   });
 
   it('Should return a valid base64 string representing the internal buffer', () => {
-    assert.strictEqual(str64, sbuff.toString('binary'));
+    let str64 = buff.toString('base64');
+    assert.strictEqual(str64, sbuff.toString('base64'));
+  });
+
+  it('Should return a valid hex string representing the internal buffer', () => {
+    let hex = buff.toString('hex');
+    assert.strictEqual(hex, sbuff.toString('hex'));
+  });
+
+  it('Should return a valid binary string representing the internal buffer', () => {
+    let binary = buff.toString('binary');
+    assert.strictEqual(binary, sbuff.toString('binary'));
   });
 
   it('Should throw an error if an invalid encoding is provided', () => {
@@ -753,6 +762,34 @@ describe('Displaying the buffer as a string', () => {
       let strError = sbuff.toString(invalidencoding);
     });
   });
+});
+
+describe('Character encodings', () => {
+
+  const convert = (source: string, encoding: BufferEncoding) => new SmartBuffer()
+    .writeString(source, encoding)
+    .toString(encoding);
+
+  it('Should encode and decode as utf8', function() {
+    let source = 'All I want is €s and \u{1F600}s';
+    assert.equal(convert(source, 'utf8'), source);
+  });
+
+  it('Should encode and decode as base64', function() {
+    let str = 'AAEC/w==';
+    assert.equal(convert(str, 'base64'), str);
+  });
+
+  it('Should encode and decode as hex', function() {
+    let str = '0ab1c2d3e4f5';
+    assert.equal(convert(str, 'hex'), str);
+  });
+
+  it('Should encode and decode as binary', function() {
+    let str = '\x0a\xb1\xc2\xd3\xe4\xf5';
+    assert.equal(convert(str, 'binary'), str);
+  });
+
 });
 
 describe('Destroying the buffer', () => {

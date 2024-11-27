@@ -1,7 +1,7 @@
 import {
   ERRORS, checkOffsetValue, checkLengthValue, checkTargetOffset,
   checkEncoding, isFiniteInteger, bigIntAndBufferInt64Check,
-  toString,
+  toString, stringToUint8Array,
 } from './utils';
 
 /**
@@ -1240,8 +1240,10 @@ class SmartBuffer {
       encodingVal = encoding;
     }
 
-    // Calculate bytelength of string.
-    const byteLength = Buffer.byteLength(value, encodingVal);
+    // Note: it's not possible to calculate the bytelength before actually 
+    // performing the conversion because we can't use Buffer.byteLength.
+    const dv = stringToUint8Array(value, encodingVal);
+    const { byteLength } = dv;
 
     // Ensure there is enough internal Buffer capacity.
     if (isInsert) {
@@ -1250,9 +1252,8 @@ class SmartBuffer {
       this._ensureWriteable(byteLength, offsetVal);
     }
 
-    // Write value
-    const dv = new Uint8Array(this._buff.buffer, offsetVal, byteLength);
-    new TextEncoder().encodeInto(value, dv);
+    // Now write away the string once we know sufficient capacity is present.
+    this._buff.set(dv, offsetVal);
 
     // Increment internal Buffer write offset;
     if (isInsert) {
@@ -1439,7 +1440,7 @@ class SmartBuffer {
    * @returns SmartBuffer this buffer
    */
   private _insertNumberValue<T extends number | bigint>(
-    func: (value: T, offset?: number) => number,
+    func: (offset: number, value: T, endianness?: boolean) => any,
     endianness: boolean | undefined,
     byteSize: number,
     value: T,
@@ -1472,7 +1473,7 @@ class SmartBuffer {
    * @returns SmartBuffer this buffer
    */
   private _writeNumberValue<T extends number | bigint>(
-    func: (value: T, offset?: number) => number,
+    func: (offset: number, value: T, endianness?: boolean) => any,
     endianness: boolean | undefined,
     byteSize: number,
     value: T,
