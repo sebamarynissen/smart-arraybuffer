@@ -1,12 +1,11 @@
 {
    "compileOnSave": true,
     "compilerOptions": {
-        "target": "es6",
+        "target": "es2020",
         "module": "commonjs",
         "sourceMap": true,
         "moduleResolution": "node",
         "outDir": "build",
-        "watch": false,
         "declaration": true,
         "declarationDir": "typings",
         "removeComments":false,

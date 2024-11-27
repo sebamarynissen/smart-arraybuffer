@@ -1,16 +1,18 @@
 {
-  "name": "smart-buffer",
+  "name": "smart-arraybuffer",
   "version": "4.2.0",
-  "description": "smart-buffer is a Buffer wrapper that adds automatic read & write offset tracking, string operations, data insertions, and more.",
+  "description": "smart-arraybuffer is an ArrayBuffer wrapper that adds automatic read & write offset tracking, string operations, data insertions, and more.",
   "main": "build/smartbuffer.js",
-  "contributors": ["syvita"],
-  "homepage": "https://github.com/JoshGlazebrook/smart-buffer/",
+  "contributors": [
+    "syvita"
+  ],
+  "homepage": "https://github.com/sebamarynissen/smart-arraybuffer/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/JoshGlazebrook/smart-buffer.git"
+    "url": "https://github.com/sebamarynissen/smart-arraybuffer.git"
   },
   "bugs": {
-    "url": "https://github.com/JoshGlazebrook/smart-buffer/issues"
+    "url": "https://github.com/sebamarynissen/smart-arraybuffer/issues"
   },
   "keywords": [
     "buffer",
@@ -25,7 +27,7 @@
     "node": ">= 6.0.0",
     "npm": ">= 3.0.0"
   },
-  "author": "Josh Glazebrook",
+  "author": "Sebastiaan Marynissen",
   "license": "MIT",
   "readmeFilename": "README.md",
   "devDependencies": {
@@ -34,6 +36,7 @@
     "@types/node": "^12.0.0",
     "chai": "4.2.0",
     "coveralls": "3.0.5",
+    "cross-env": "^0.0.2-security",
     "istanbul": "^0.4.5",
     "mocha": "6.2.0",
     "mocha-lcov-reporter": "^1.3.0",
@@ -41,15 +44,15 @@
     "source-map-support": "0.5.12",
     "ts-node": "8.3.0",
     "tslint": "5.18.0",
-    "typescript": "^3.2.1"
+    "typescript": "^5.7.2"
   },
   "typings": "typings/smartbuffer.d.ts",
   "dependencies": {},
   "scripts": {
     "prepublish": "npm install -g typescript && npm run build",
-    "test": "NODE_ENV=test mocha --recursive --require ts-node/register test/**/*.ts",
-    "coverage": "NODE_ENV=test nyc npm test",
-    "coveralls": "NODE_ENV=test nyc npm test && nyc report --reporter=text-lcov | coveralls",
+    "test": "cross-env NODE_ENV=test mocha --recursive --require ts-node/register test/**/*.ts",
+    "coverage": "Ncross-env ODE_ENV=test nyc npm test",
+    "coveralls": "cross-env NODE_ENV=test nyc npm test && nyc report --reporter=text-lcov | coveralls",
     "lint": "tslint --type-check --project tsconfig.json 'src/**/*.ts'",
     "build": "tsc -p ./"
   },
