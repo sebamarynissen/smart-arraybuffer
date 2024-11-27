@@ -107,6 +107,9 @@ function toString(buffer: Uint8Array, encoding : BufferEncoding):string {
  * @return { Buffer }
  */
 function toBuffer(array: Uint8Array) {
+  if (typeof Buffer === 'undefined') {
+    throw new Error('Platform does not provide a Buffer global.');
+  }
   return Buffer.from(array.buffer, array.byteOffset, array.byteLength);
 }
 

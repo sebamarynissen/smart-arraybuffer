@@ -31,6 +31,7 @@ class SmartBuffer {
 
   private _encoding: BufferEncoding = DEFAULT_SMARTBUFFER_ENCODING;
   private _buff: Uint8Array;
+  private _view: DataView;
   private _writeOffset: number = 0;
   private _readOffset: number = 0;
 
@@ -50,7 +51,7 @@ class SmartBuffer {
       // Checks for initial size length
       if (options.size) {
         if (isFiniteInteger(options.size) && options.size > 0) {
-          this._buff = Buffer.allocUnsafe(options.size);
+          this._buff = new Uint8Array(options.size);
         } else {
           throw new Error(ERRORS.INVALID_SMARTBUFFER_SIZE);
         }
@@ -63,7 +64,7 @@ class SmartBuffer {
           throw new Error(ERRORS.INVALID_SMARTBUFFER_BUFFER);
         }
       } else {
-        this._buff = Buffer.allocUnsafe(DEFAULT_SMARTBUFFER_SIZE);
+        this._buff = new Uint8Array(DEFAULT_SMARTBUFFER_SIZE);
       }
     } else {
       // If something was passed but it's not a SmartBufferOptions object
@@ -72,8 +73,18 @@ class SmartBuffer {
       }
 
       // Otherwise default to sane options
-      this._buff = Buffer.allocUnsafe(DEFAULT_SMARTBUFFER_SIZE);
+      this._buff = new Uint8Array(DEFAULT_SMARTBUFFER_SIZE);
     }
+
+    // Now store the corresponding dataview as well. Note that we have to make 
+    // sure to properly copy the underlying offset and lengths of the 
+    // arraybuffer, as the Uint8Array might be a partial view of an arraybuffer!
+    this._view = new DataView(
+      this._buff.buffer,
+      this._buff.byteOffset,
+      this._buff.byteLength,
+    );
+
   }
 
   /**
@@ -1358,6 +1369,11 @@ class SmartBuffer {
       this._buff = new Uint8Array(newLength);
 
       this._buff.set(data.subarray(0, oldLength), 0);
+      this._view = new DataView(
+        this._buff.buffer,
+        this._buff.byteOffset,
+        this._buff.byteOffset,
+      );
     }
   }
 
@@ -1376,8 +1392,7 @@ class SmartBuffer {
     this.ensureReadable(byteSize, offset);
 
     // Call Buffer.readXXXX();
-    const dv = new DataView(this._buff.buffer);
-    const value = func.call(dv, typeof offset === 'number' ? offset : this._readOffset, endianness);
+    const value = func.call(this._view, typeof offset === 'number' ? offset : this._readOffset, endianness);
 
     // Adjust internal read offset if an optional read offset was not provided.
     if (typeof offset === 'undefined') {
@@ -1413,8 +1428,7 @@ class SmartBuffer {
     this.ensureInsertable(byteSize, offset);
 
     // Call buffer.writeXXXX();
-    const dv = new DataView(this._buff.buffer);
-    func.call(dv, offset, value, endianness);
+    func.call(this._view, offset, value, endianness);
 
     // Adjusts internally managed write offset.
     this._writeOffset += byteSize;
@@ -1456,8 +1470,7 @@ class SmartBuffer {
     // Ensure there is enough internal Buffer capacity. (raw offset is passed)
     this._ensureWriteable(byteSize, offsetVal);
 
-    const dv = new DataView(this._buff.buffer);
-    func.call(dv, offsetVal, value, endianness);
+    func.call(this._view, offsetVal, value, endianness);
 
     // If an offset was given, check to see if we wrote beyond the current writeOffset.
     if (typeof offset === 'number') {
