@@ -71,7 +71,10 @@ class SmartBuffer {
         }
         // Check for initial Buffer
       } else if (options.buff) {
-        if (options.buff instanceof Uint8Array) {
+        if (options.buff instanceof ArrayBuffer) {
+          this._buff = new Uint8Array(options.buff);
+          this.length = this._buff.length;
+        } else if (options.buff instanceof Uint8Array) {
           this._buff = options.buff;
           this.length = options.buff.length;
         } else {
@@ -1135,12 +1138,12 @@ class SmartBuffer {
   }
 
   /**
-   * Gets the underlying internal Uint8Array. (This includes unmanaged data)
+   * Gets the underlying internal ArrayBuffer. (This includes unmanaged data)
    *
-   * @return { Uint8Array } The Uint8Array value.
+   * @return { ArrayBuffer } The ArrayBuffer value.
    */
-  get internalUint8Array(): Uint8Array {
-    return this._buff;
+  get internalArrayBuffer(): ArrayBuffer {
+    return this._buff.buffer;
   }
 
   /**
@@ -1165,9 +1168,9 @@ class SmartBuffer {
    * Gets the value of the internal managed Uint8Array as ArrayBuffer.
    */
   toArrayBuffer(): ArrayBuffer {
-    const arrayBuffer = new ArrayBuffer(this._buff.byteLength);
+    const arrayBuffer = new ArrayBuffer(this.length);
     const view = new Uint8Array(arrayBuffer);
-    view.set(this._buff);
+    view.set(this._buff.subarray(0, this.length));
     return arrayBuffer;
   }
 
