@@ -1,4 +1,4 @@
-import { SmartBuffer } from './smartbuffer';
+import type { SmartBuffer } from './smartbuffer.js';
 
 /**
  * Error strings

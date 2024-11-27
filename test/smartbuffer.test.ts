@@ -1,5 +1,5 @@
-import { SmartBuffer, SmartBufferOptions } from '../src/smartbuffer';
-import { ERRORS, isFiniteInteger, checkEncoding, checkOffsetValue, checkLengthValue, checkTargetOffset } from '../src/utils';
+import { SmartBuffer, SmartBufferOptions } from '../build/smartbuffer.js';
+import { ERRORS, isFiniteInteger, checkEncoding, checkOffsetValue, checkLengthValue, checkTargetOffset } from '../build/utils.js';
 import { assert } from 'chai';
 import 'mocha';
 
@@ -23,7 +23,7 @@ describe('Constructing a SmartBuffer', () => {
     const reader = SmartBuffer.fromBuffer(buff, 'ascii');
 
     it('should have the exact same internal Buffer', () => {
-      assert.strictEqual(reader.internalBuffer, buff);
+      assert.strictEqual(reader.internalUint8Array, buff);
     });
 
     it('should have the same encoding that was set', () => {
@@ -36,7 +36,7 @@ describe('Constructing a SmartBuffer', () => {
     const reader = SmartBuffer.fromSize(size);
 
     it('should have an internal Buffer with the same length as the size defined in the constructor', () => {
-      assert.strictEqual(reader.internalBuffer.length, size);
+      assert.strictEqual(reader.internalUint8Array.length, size);
     });
   });
 
@@ -85,18 +85,18 @@ describe('Constructing a SmartBuffer', () => {
     it('should create a SmartBuffer with size 1024 and ascii encoding', () => {
       const sbuff = SmartBuffer.fromOptions(validOptions1);
       assert.strictEqual(sbuff.encoding, validOptions1.encoding);
-      assert.strictEqual(sbuff.internalBuffer.length, validOptions1.size);
+      assert.strictEqual(sbuff.internalUint8Array.length, validOptions1.size);
     });
 
     it('should create a SmartBuffer with the provided buffer as the initial value', () => {
       const sbuff = SmartBuffer.fromOptions(validOptions2);
-      assert.deepEqual(sbuff.internalBuffer, validOptions2.buff);
+      assert.deepEqual(sbuff.internalUint8Array, validOptions2.buff);
     });
 
     it('should create a SmartBuffer with the provided ascii encoding, and create a default buffer size', () => {
       const sbuff = SmartBuffer.fromOptions(validOptions3);
       assert.strictEqual(sbuff.encoding, validOptions3.encoding);
-      assert.strictEqual(sbuff.internalBuffer.length, 4096);
+      assert.strictEqual(sbuff.internalUint8Array.length, 4096);
     });
 
     it('should throw an error when given an options object with an invalid encoding', () => {
@@ -168,13 +168,13 @@ describe('Constructing a SmartBuffer', () => {
     const sbuff1 = SmartBuffer.fromBuffer(originalBuffer);
 
     it('Should create a SmartBuffer with a provided internal Buffer as the initial value', () => {
-      assert.deepEqual(sbuff1.internalBuffer, originalBuffer);
+      assert.deepEqual(sbuff1.internalUint8Array, originalBuffer);
     });
 
     const sbuff2 = SmartBuffer.fromSize(1024);
 
     it('Should create a SmartBuffer with a set provided initial Buffer size', () => {
-      assert.strictEqual(sbuff2.internalBuffer.length, 1024);
+      assert.strictEqual(sbuff2.internalUint8Array.length, 1024);
     });
 
     const options: any = {
@@ -186,7 +186,7 @@ describe('Constructing a SmartBuffer', () => {
 
     it('Should create a SmartBuffer instance with a given SmartBufferOptions object', () => {
       assert.strictEqual(sbuff3.encoding, options.encoding);
-      assert.strictEqual(sbuff3.internalBuffer.length, options.size);
+      assert.strictEqual(sbuff3.internalUint8Array.length, options.size);
     });
   });
 });
@@ -704,7 +704,7 @@ describe('Automatic internal buffer resizing', () => {
     writer = SmartBuffer.fromSize(1);
     writer.writeString(str);
 
-    assert.strictEqual(writer.internalBuffer.length, str.length);
+    assert.strictEqual(writer.internalUint8Array.length, str.length);
   });
 
   it('Should not throw an error when adding data that is larger than current buffer size (internal resize algo succeeds)', () => {
@@ -714,7 +714,7 @@ describe('Automatic internal buffer resizing', () => {
     writer.writeBuffer(buff);
 
     // Test internal array growth algo.
-    assert.strictEqual(writer.internalBuffer.length, 100 * 3 / 2 + 1);
+    assert.strictEqual(writer.internalUint8Array.length, 100 * 3 / 2 + 1);
   });
 });
 
