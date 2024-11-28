@@ -622,6 +622,45 @@ describe('Reading/Writing To/From SmartBuffer', () => {
       });
     });
   });
+
+  describe('ArrayBuffer values', () => {
+
+    it('does not return the underlying ArrayBuffer', () => {
+      let source = new ArrayBuffer(10);
+      let view = new Uint8Array(source, 5, 5);
+      view.fill(0xff);
+      let reader = SmartBuffer.fromBuffer(view);
+      let buff = reader.readArrayBuffer();
+      expect(buff).to.be.an.instanceOf(ArrayBuffer);
+      expect([...new Uint8Array(buff)]).to.deep.equal([0xff, 0xff, 0xff, 0xff, 0xff]);
+
+      let converted = reader.toArrayBuffer();
+      expect(converted.byteLength).to.equal(5);
+
+    });
+
+    it('writes a NT array buffer', () => {
+
+      let source = new ArrayBuffer(3);
+      let view = new DataView(source);
+      view.setUint8(0, 0xff);
+      view.setUint8(1, 0xee);
+      view.setUint8(2, 0xdd);
+
+      let buffer = new SmartBuffer();
+      buffer.writeArrayBufferNT(source);
+      expect(buffer.toArrayBuffer().byteLength).to.equal(source.byteLength+1);
+
+      let dv = new DataView(buffer.readArrayBufferNT());
+      expect(dv.byteLength).to.equal(3);
+      expect(dv.getUint8(0)).to.equal(0xff);
+      expect(dv.getUint8(1)).to.equal(0xee);
+      expect(dv.getUint8(2)).to.equal(0xdd);
+
+    });
+
+  });
+
 });
 
 describe('Skipping around data', () => {
