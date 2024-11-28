@@ -20,6 +20,18 @@ function toBuffer(array: Uint8Array): Buffer {
 }
 
 /**
+ * Helper function for converting a uint8array to an arraybuffer. Note that we 
+ * can't just return the underlying ArrayBuffer because the uint8array might be 
+ * a view on top of it that does not include the entire arraybuffer!
+ */
+function toArrayBuffer(array: Uint8Array): ArrayBuffer {
+  const buffer = new ArrayBuffer(array.byteLength);
+  const view = new Uint8Array(buffer);
+  view.set(array);
+  return buffer;
+}
+
+/**
  * Object interface for constructing new SmartBuffer instances.
  */
 interface SmartBufferOptions {
@@ -946,6 +958,17 @@ class SmartBuffer {
   }
 
   /**
+   * Reads an ArrayBuffer from the internal read position.
+   *
+   * @param length { Number } The length of data to read as a Buffer.
+   *
+   * @return { ArrayBuffer }
+   */
+  readArrayBuffer(length?: number): ArrayBuffer {
+    return toArrayBuffer(this.readUint8Array(length));
+  }
+
+  /**
    * Writes a Uint8Array to the current write position.
    *
    * @param value { Uint8Array } The Uint8Array to write.
@@ -972,6 +995,18 @@ class SmartBuffer {
   }
 
   /**
+   * Writes an ArrayBuffer to the current write position.
+   *
+   * @param value { ArrayBuffer } The ArrayBuffer to write.
+   * @param offset { Number } The offset to write the Buffer to.
+   *
+   * @return this
+   */
+  insertArrayBuffer(value: ArrayBuffer, offset: number): SmartBuffer {
+    return this.insertUint8Array(new Uint8Array(value), offset);
+  }
+
+  /**
    * Writes a Uint8Array to the current write position.
    *
    * @param value { Uint8Array } The Uint8Array to write
@@ -993,6 +1028,18 @@ class SmartBuffer {
    */
   writeBuffer(value: Uint8Array, offset?: number): SmartBuffer {
     return this.writeUint8Array(value, offset);
+  }
+
+  /**
+   * Writes an ArrayBuffer to the current write position.
+   *
+   * @param value { ArrayBuffer } The ArrayBuffer to write.
+   * @param offset { Number } The offset to write the ArrayBuffer to.
+   *
+   * @return this
+   */
+  writeArrayBuffer(value: ArrayBuffer, offset?: number): SmartBuffer {
+    return this.writeUint8Array(new Uint8Array(value), offset);
   }
 
   /**
@@ -1030,6 +1077,15 @@ class SmartBuffer {
   }
 
   /**
+   * Reads a null-terminated Buffer from the current read poisiton.
+   *
+   * @return { ArrayBuffer }
+   */
+  readArrayBufferNT(): ArrayBuffer {
+    return toArrayBuffer(this.readUint8ArrayNT());
+  }
+
+  /**
    * Inserts a null-terminated Uint8Array.
    *
    * @param value { Uint8Array } The Uint8Array to write.
@@ -1057,6 +1113,18 @@ class SmartBuffer {
    */
   insertBufferNT(value: Uint8Array, offset: number): SmartBuffer {
     return this.insertUint8ArrayNT(value, offset);
+  }
+
+  /**
+   * Inserts a null-terminated ArrayBuffer.
+   *
+   * @param value { ArrayBuffer } The ArrayBuffer to write.
+   * @param offset { Number } The offset to write the ArrayBuffer to.
+   *
+   * @return this
+   */
+  insertArrayBufferNT(value: ArrayBuffer, offset: number): SmartBuffer {
+    return this.insertUint8ArrayNT(new Uint8Array(value), offset);
   }
 
   /**
@@ -1090,6 +1158,18 @@ class SmartBuffer {
    */
   writeBufferNT(value: Uint8Array, offset?: number): SmartBuffer {
     return this.writeUint8ArrayNT(value, offset);
+  }
+
+  /**
+   * Writes a null-terminated ArrayBuffer.
+   *
+   * @param value { ArrayBuffer } The ArrayBuffer to write.
+   * @param offset { Number } The offset to write the ArrayBuffer to.
+   *
+   * @return this
+   */
+  writeArrayBufferNT(value: ArrayBuffer, offset?: number): SmartBuffer {
+    return this.writeUint8ArrayNT(new Uint8Array(value), offset);
   }
 
   /**
@@ -1206,10 +1286,7 @@ class SmartBuffer {
    * Gets the value of the internal managed Uint8Array as ArrayBuffer.
    */
   toArrayBuffer(): ArrayBuffer {
-    const arrayBuffer = new ArrayBuffer(this.length);
-    const view = new Uint8Array(arrayBuffer);
-    view.set(this._buff.subarray(0, this.length));
-    return arrayBuffer;
+    return toArrayBuffer(this._buff.subarray(0, this.length));
   }
 
   /**
