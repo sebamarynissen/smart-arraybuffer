@@ -105,9 +105,9 @@ class SmartBuffer {
   }
 
   /**
-   * Creates a new SmartBuffer instance with the provided internal Buffer size and optional encoding.
+   * Creates a new SmartBuffer instance with the provided internal buffer size and optional encoding.
    *
-   * @param size { Number } The size of the internal Buffer.
+   * @param size { Number } The size of the internal buffer.
    * @param encoding { String } The BufferEncoding to use for strings.
    *
    * @return { SmartBuffer }
@@ -120,9 +120,9 @@ class SmartBuffer {
   }
 
   /**
-   * Creates a new SmartBuffer instance with the provided Buffer and optional encoding.
+   * Creates a new SmartBuffer instance with the provided buffer and optional encoding.
    *
-   * @param buffer { Buffer } The Buffer to use as the internal Buffer value.
+   * @param buffer { Uint8Array | ArrayBuffer } The Uint8Array or ArrayBuffer to use as the internal buffer value.
    * @param encoding { String } The BufferEncoding to use for strings.
    *
    * @return { SmartBuffer }
@@ -914,7 +914,7 @@ class SmartBuffer {
   /**
    * Reads a Uint8Array from the internal read position.
    *
-   * @param length { Number } The length of data to read as a Buffer.
+   * @param length { Number } The length of data to read as a Uint8Array.
    *
    * @return { Uint8Array }
    */
@@ -986,7 +986,7 @@ class SmartBuffer {
   /**
    * Writes a Buffer to the current write position.
    *
-   * @param value { Buffer } The Buffer to write.
+   * @param value { Uint8Array } The Buffer to write.
    * @param offset { Number } The offset to write the Buffer to.
    *
    * @return this
@@ -1032,8 +1032,8 @@ class SmartBuffer {
   /**
    * Inserts a null-terminated Uint8Array.
    *
-   * @param value { Uint8Array } The Buffer to write.
-   * @param offset { Number } The offset to write the Buffer to.
+   * @param value { Uint8Array } The Uint8Array to write.
+   * @param offset { Number } The offset to write the Uint8Array to.
    *
    * @return this
    */
@@ -1062,8 +1062,8 @@ class SmartBuffer {
   /**
    * Writes a null-terminated Uint8Array.
    *
-   * @param value { Uint8Array } The Buffer to write.
-   * @param offset { Number } The offset to write the Buffer to.
+   * @param value { Uint8Array } The Uint8Array to write.
+   * @param offset { Number } The offset to write the Uint8Array to.
    *
    * @return this
    */
@@ -1083,7 +1083,7 @@ class SmartBuffer {
   /**
    * Writes a null-terminated Buffer.
    *
-   * @param value { Buffer } The Buffer to write.
+   * @param value { Uint8Array } The Buffer to write.
    * @param offset { Number } The offset to write the Buffer to.
    *
    * @return this
@@ -1292,9 +1292,9 @@ class SmartBuffer {
   }
 
   /**
-   * Handles writing or insert of a Buffer.
+   * Handles writing or insert of a Uint8Array.
    *
-   * @param value { Buffer } The Buffer to write.
+   * @param value { Uint8Array } The Uint8Array to write.
    * @param offset { Number } The offset to write the Buffer to.
    */
   private _handleBuffer(value: Uint8Array, isInsert: boolean, offset?: number): SmartBuffer {
@@ -1436,7 +1436,7 @@ class SmartBuffer {
   private _readNumberValue<T>(func: (offset: number) => T, endianness: boolean | undefined, byteSize: number, offset?: number): T {
     this.ensureReadable(byteSize, offset);
 
-    // Call Buffer.readXXXX();
+    // Call DataView.getXXXX();
     const value = func.call(this._view, typeof offset === 'number' ? offset : this._readOffset, endianness);
 
     // Adjust internal read offset if an optional read offset was not provided.
