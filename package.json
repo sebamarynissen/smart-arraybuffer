@@ -10,7 +10,7 @@
   "homepage": "https://github.com/sebamarynissen/smart-arraybuffer/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/sebamarynissen/smart-arraybuffer"
+    "url": "git://github.com/sebamarynissen/smart-arraybuffer.git"
   },
   "bugs": {
     "url": "https://github.com/sebamarynissen/smart-arraybuffer/issues"
