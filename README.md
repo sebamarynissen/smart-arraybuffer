@@ -28,7 +28,7 @@ While smart-arraybuffer has almost the exact same api as the original [smart-buf
 
  - The property `.internalBuffer` is not available. It has been replaced by `.internalArrayBuffer`, which returns the underlying `ArrayBuffer` instance instead of the underlying `Buffer` instance. If you were relying on `.internalBuffer`, you cannot use it as a drop-in replacement.
  - The `.writeString()` functions don't support all encodings that `Buffer` does, only `utf8`, `utf-8`, `ascii`, `base64`, `hex` and `binary` are supported. This is because the module relies on [TextEncoder](https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder) to perform the encoding, which only supports utf8. Given that `base64`, `hex` and `binary` are so common, they have been implemented manually. If you need support for other encodings, like `utf-16le`, then you still need to work with Node's native Buffer, which kind of defeats the purpose of this module. On the upside, the `.readString()` methods support all encodings that [TextDecoder](https://developer.mozilla.org/en-US/docs/Web/API/Encoding_API/Encodings) supports, which is a lot more than what Node's Buffer does.
- - Adds a bunch of new methods like `.toArrayBuffer()`, `.toUint8Array()`, `.readUint8Array()`, `.writeUint8Array()` were added that are meant to replace their buffer equivalents.
+ - Adds a bunch of new methods like `.toArrayBuffer()`, `.toUint8Array()`, `.readUint8Array()`, `.writeUint8Array()` that are meant to replace their buffer equivalents.
  - If you're working in Node.js - meaning the `Buffer` global is available - then you can still use the buffer methods (`.toBuffer()`, `.readBuffer()`, `writeBuffer()` etc.). However, doing so kind of defeats the purpose of the module, but it may help for incrementally [migrating away from Node.js buffer](https://sindresorhus.com/blog/goodbye-nodejs-buffer): just keep using `.toBuffer()` where the calling code actually needs a Node.js buffer, and use `.toUint8Array()` or `.toArrayBuffer()` where already possible.
 
 ## Using smart-arraybuffer
@@ -447,12 +447,82 @@ buff.insertStringNT('hello', 2);
 buff.insertStringNT('hello', 2, 'utf8');
 ```
 
+## ArrayBuffers
+
+### buff.readArrayBuffer([length])
+- ```length``` *{number}* The number of bytes to read into an ArrayBuffer. **Default:** ```Reads to the end of the Buffer```
+
+Read an ArrayBuffer of a specified size.
+
+### buff.writeArrayBuffer(value[, offset])
+- ```value``` *{ArrayBuffer}* The array buffer value to write.
+- ```offset``` *{number}* An optional offset to write the value to. **Default:** ```Auto managed offset```
+
+### buff.insertArrayBuffer(value, offset)
+- ```value``` *{ArrayBuffer}* The array buffer value to write.
+- ```offset``` *{number}* The offset to write the value to.
+
+
+### buff.readArrayBufferNT()
+
+Read a null terminated ArrayBuffer.
+
+### buff.writeArrayBufferNT(value[, offset])
+- ```value``` *{ArrayBuffer}* The array buffer value to write.
+- ```offset``` *{number}* An optional offset to write the value to. **Default:** ```Auto managed offset```
+
+Write a null terminated Buffer.
+
+
+### buff.insertArrayBufferNT(value, offset)
+- ```value``` *{ArrayBuffer}* The array buffer value to write.
+- ```offset``` *{number}* The offset to write the value to.
+
+Insert a null terminated Buffer.
+
+## Uint8Arrays
+
+### buff.readUint8Array([length])
+- ```length``` *{number}* The number of bytes to read into an Uint8Array. **Default:** ```Reads to the end of the Buffer```
+
+Read an Uint8Array of a specified size.
+
+**NOTE**: The methods only works in environments that provide a Buffer global, like Node.js. It is advised to use `readUint8Array()` instead.
+
+### buff.writeUint8Array(value[, offset])
+- ```value``` *{Uint8Array}* The array buffer value to write.
+- ```offset``` *{number}* An optional offset to write the value to. **Default:** ```Auto managed offset```
+
+### buff.insertUint8Array(value, offset)
+- ```value``` *{Uint8Array}* The array buffer value to write.
+- ```offset``` *{number}* The offset to write the value to.
+
+
+### buff.readUint8ArrayNT()
+
+Read a null terminated Uint8Array.
+
+### buff.writeUint8ArrayNT(value[, offset])
+- ```value``` *{Uint8Array}* The array buffer value to write.
+- ```offset``` *{number}* An optional offset to write the value to. **Default:** ```Auto managed offset```
+
+Write a null terminated Uint8Array.
+
+
+### buff.insertUint8ArrayNT(value, offset)
+- ```value``` *{Uint8Array}* The array buffer value to write.
+- ```offset``` *{number}* The offset to write the value to.
+
+Insert a null terminated Uint8Array.
+
 ## Buffers
 
 ### buff.readBuffer([length])
 - ```length``` *{number}* The number of bytes to read into a Buffer. **Default:** ```Reads to the end of the Buffer```
 
 Read a Buffer of a specified size.
+
+**NOTE**: The methods only works in environments that provide a Buffer global, like Node.js. It is advised to use `readUint8Array()` instead.
 
 ### buff.writeBuffer(value[, offset])
 - ```value``` *{Buffer}* The buffer value to write.
@@ -555,10 +625,36 @@ buff.writeString('hello');
 console.log(buff.InternalBuffer); // <Buffer 68 65 6c 6c 6f 00 00 00 00 00 00 00 00 00 00 00>
 ```
 
+### buff.toArrayBuffer()
+- Returns: *{ArrayBuffer}*
+
+Gets a sliced ArrayBuffer instance of the internally managed ArrayBuffer. (Only includes managed data)
+
+Examples:
+```javascript
+const buff = SmartBuffer.fromSize(16);
+buff.writeString('hello');
+console.log(buff.toArrayBuffer()); // ArrayBuffer { [Uint8Contents]: <68 65 6c 6c 6f>, byteLength: 5 }
+```
+
+### buff.toUint8Array()
+- Returns: *{Uint8Array}*
+
+Gets a sliced Uint8Array instance of the internally managed ArrayBuffer. (Only includes managed data)
+
+Examples:
+```javascript
+const buff = SmartBuffer.fromSize(16);
+buff.writeString('hello');
+console.log(buff.toUint8Array()); // Uint8Array(5) [ 104, 101, 108, 108, 111 ]
+```
+
 ### buff.toBuffer()
 - Returns: *{Buffer}*
 
 Gets a sliced Buffer instance of the internally managed Buffer. (Only includes managed data)
+
+**NOTE**: This only works in environments that provide a Buffer global, like Node.js.
 
 Examples:
 ```javascript
