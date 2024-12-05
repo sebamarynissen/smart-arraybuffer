@@ -7,5 +7,7 @@ src
 test
 tslint.json
 tsconfig.json
+tsconfig.tsbuildinfo
 .vscode
 .nyc_output
+.prettierrc.yaml
