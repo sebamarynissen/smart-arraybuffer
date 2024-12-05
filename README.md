@@ -39,6 +39,10 @@ import { SmartBuffer } from 'smart-arraybuffer';
 
 // Typescript
 import { SmartBuffer, SmartBufferOptions} from 'smart-arraybuffer';
+
+// Or if you want to emphasize that you're using smart-arraybuffer instead of smart-buffer
+import { SmartArrayBuffer } from 'smart-arraybuffer';
+console.log(SmartArrayBuffer === SmartBuffer); // true
 ```
 
 ### Simple Example

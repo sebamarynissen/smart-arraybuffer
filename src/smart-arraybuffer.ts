@@ -1615,4 +1615,4 @@ class SmartBuffer {
   }
 }
 
-export { SmartBufferOptions, SmartBuffer };
+export { SmartBufferOptions, SmartBuffer, SmartBuffer as SmartArrayBuffer };
