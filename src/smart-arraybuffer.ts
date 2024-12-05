@@ -139,7 +139,7 @@ class SmartBuffer {
    *
    * @return { SmartBuffer }
    */
-  public static fromBuffer(buff: Uint8Array, encoding?: BufferEncoding): SmartBuffer {
+  public static fromBuffer(buff: Uint8Array | ArrayBuffer, encoding?: BufferEncoding): SmartBuffer {
     return new this({
       buff: buff,
       encoding: encoding
@@ -1262,6 +1262,15 @@ class SmartBuffer {
    */
   get internalArrayBuffer(): ArrayBuffer {
     return this._buff.buffer;
+  }
+
+  /**
+   * Gets the underlying internal data as Uint8Array. (This includes unmanaged data)
+   * 
+   * @return { Uint8Array }
+   */
+  get internalUint8Array(): Uint8Array {
+    return this._buff;
   }
 
   /**

@@ -1,5 +1,5 @@
 import { SmartBuffer, SmartBufferOptions } from '../src/smart-arraybuffer.js';
-import { ERRORS, isFiniteInteger, checkEncoding, checkOffsetValue, checkLengthValue, checkTargetOffset } from '../src/utils.js';
+import { ERRORS, isFiniteInteger, checkOffsetValue, checkLengthValue, checkTargetOffset } from '../src/utils.js';
 import { expect, assert } from 'chai';
 import 'mocha';
 
@@ -10,6 +10,12 @@ describe('Constructing a SmartBuffer', () => {
 
     it('should have the exact same internal ArrayBuffer when constructed with a Buffer', () => {
       assert.strictEqual(reader.internalArrayBuffer, buff.buffer);
+    });
+
+    it('should have the exact same internal Uint8Array when constructed with a Uint8Array', () => {
+      const array = new Uint8Array([0xaa, 0xbb, 0xcc]);
+      const reader = SmartBuffer.fromBuffer(array);
+      assert.strictEqual(reader.internalUint8Array, array);
     });
 
     it('should return a Uint8Array with the same content', () => {
@@ -101,8 +107,9 @@ describe('Constructing a SmartBuffer', () => {
     });
 
     it('should create a SmartBuffer with the provided buffer as the initial value', () => {
-      const sbuff = SmartBuffer.fromOptions(validOptions2);
-      assert.deepEqual(sbuff.internalArrayBuffer, validOptions2.buff.buffer);
+      const buff = Buffer.alloc(1024);
+      const sbuff = SmartBuffer.fromOptions({ buff });
+      assert.deepEqual(sbuff.internalArrayBuffer, buff.buffer);
     });
 
     it('should create a SmartBuffer with the provided ascii encoding, and create a default buffer size', () => {
@@ -167,6 +174,7 @@ describe('Constructing a SmartBuffer', () => {
     it('should throw and exception when given an object that is not a SmartBufferOptions', () => {
       assert.throws(() => {
         // tslint:disable-next-line:no-unused-variable
+        // @ts-ignore
         const reader = SmartBuffer.fromOptions(null);
       }, Error);
     });
