@@ -473,14 +473,14 @@ Read a null terminated ArrayBuffer.
 - ```value``` *{ArrayBuffer}* The array buffer value to write.
 - ```offset``` *{number}* An optional offset to write the value to. **Default:** ```Auto managed offset```
 
-Write a null terminated Buffer.
+Write a null terminated ArrayBuffer.
 
 
 ### buff.insertArrayBufferNT(value, offset)
 - ```value``` *{ArrayBuffer}* The array buffer value to write.
 - ```offset``` *{number}* The offset to write the value to.
 
-Insert a null terminated Buffer.
+Insert a null terminated ArrayBuffer.
 
 ## Uint8Arrays
 
