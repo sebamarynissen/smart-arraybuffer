@@ -140,9 +140,11 @@ const buff = new SmartBuffer();
 3. **Strings**
     1. [Strings](#strings)
     2. [Null Terminated Strings](#null-terminated-strings)
-4. [Buffers](#buffers)
-5. [Offsets](#offsets)
-6. [Other](#other)
+4. [ArrayBuffers](#arraybuffers)
+5. [Uint8Arrays](#uint8arrays)
+6. [Buffers](#buffers)
+7. [Offsets](#offsets)
+8. [Other](#other)
 
 
 ## Constructing
