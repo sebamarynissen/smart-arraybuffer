@@ -26,7 +26,7 @@ If you cloned this repo and wish to build the library manually use:
 
 While smart-arraybuffer has almost the exact same api as the original [smart-buffer](https://www.npmjs.com/package/smart-buffer) package, there are a few things you need to be aware of if you want to use it as a drop-in replacement:
 
- - The property `.internalBuffer` is not available. It has been replaced by `.internalArrayBuffer`, which returns the underlying `ArrayBuffer` instance instead of the underlying `Buffer` instance. If you were relying on `.internalBuffer`, you cannot use it as a drop-in replacement.
+ - The property `.internalBuffer` is not available. It has been replaced by `.internalArrayBuffer` and `.internalUint8Array`, which returns the underlying `ArrayBuffer` or `Uint8Array`instance instead of the underlying `Buffer` instance. If you were relying on `.internalBuffer`, you cannot use it as a drop-in replacement.
  - The `.writeString()` functions don't support all encodings that `Buffer` does, only `utf8`, `utf-8`, `ascii`, `base64`, `hex` and `binary` are supported. This is because the module relies on [TextEncoder](https://developer.mozilla.org/en-US/docs/Web/API/TextEncoder) to perform the encoding, which only supports utf8. Given that `base64`, `hex` and `binary` are so common, they have been implemented manually. If you need support for other encodings, like `utf-16le`, then you still need to work with Node's native Buffer, which kind of defeats the purpose of this module. On the upside, the `.readString()` methods support all encodings that [TextDecoder](https://developer.mozilla.org/en-US/docs/Web/API/Encoding_API/Encodings) supports, which is a lot more than what Node's Buffer does.
  - Adds a bunch of new methods like `.toArrayBuffer()`, `.toUint8Array()`, `.readUint8Array()`, `.writeUint8Array()` that are meant to replace their buffer equivalents.
  - If you're working in Node.js - meaning the `Buffer` global is available - then you can still use the buffer methods (`.toBuffer()`, `.readBuffer()`, `writeBuffer()` etc.). However, doing so kind of defeats the purpose of the module, but it may help for incrementally [migrating away from Node.js buffer](https://sindresorhus.com/blog/goodbye-nodejs-buffer): just keep using `.toBuffer()` where the calling code actually needs a Node.js buffer, and use `.toUint8Array()` or `.toArrayBuffer()` where already possible.
@@ -615,16 +615,39 @@ Clear and resets the SmartBuffer instance.
 Gets the number of remaining bytes to be read.
 
 
-### buff.internalBuffer
+### buff.internalArrayBuffer
 - Returns: *{Buffer}*
 
-Gets the internally managed Buffer (Includes unmanaged data).
+Gets the internally managed ArrayBuffer (Includes unmanaged data).
+Note that if the SmartBuffer was created from a Uint8Array, then this returns that array's underlying ArrayBuffer, which might have a different byteLength than the Uint8Array because the Uint8Array might have been constructed as `new Uint8Array(buffer, byteOffset, length)`!
 
 Examples:
 ```javascript
-const buff = SmartBuffer.fromSize(16);
+const ab = new ArrayBuffer(16);
+const buff = SmartBuffer.fromBuffer(ab);
 buff.writeString('hello');
-console.log(buff.InternalBuffer); // <Buffer 68 65 6c 6c 6f 00 00 00 00 00 00 00 00 00 00 00>
+console.log(buff.internalArrayBuffer); // ArrayBuffer { [Uint8Contents]: <68 65 6c 6c 6f 00 00 00 00 00 00 00 00 00 00 00>, byteLength: 16 }>
+console.log(buff.internalArrayBuffer === ab); // true
+
+const view = new Uint8Array(ab, 2);
+const buff = SmartBuffer.fromBuffer(view);
+console.log(buff.internalArrayBuffer === ab); // true
+```
+
+### buff.internalUint8Array
+- Returns: *{Uint8Array}*
+
+Gets the internally managed data as a Uint8Array (Includes unmanaged data).
+Note that if the SmartBuffer was created from an ArrayBuffer, then this returns a Uint8Array constructed from that ArrayBuffer.
+If the SmartBuffer was created from a Uint8Array instead - including a Node.js buffer - then this is returned by reference.
+
+Examples:
+```javascript
+const array = new Uint8Array(16);
+const buff = SmartBuffer.fromBuffer(array);
+buff.writeString('hello');
+console.log(buff.internalUint8Array); // Uint8Array(5) [ 104, 101, 108, 108, 111, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ]
+console.log(buff.internalUint8Array === array); // true
 ```
 
 ### buff.toArrayBuffer()
