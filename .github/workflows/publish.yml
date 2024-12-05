@@ -21,6 +21,6 @@ jobs:
       - run: npm install -g npm@latest
       - run: npm i
       - run: npm test
-      - run: npm whoami; npm publish -w smart-arraybuffer --provenance --access public
+      - run: npm whoami; npm publish smart-arraybuffer --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}
