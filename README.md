@@ -493,8 +493,6 @@ Insert a null terminated ArrayBuffer.
 
 Read an Uint8Array of a specified size.
 
-**NOTE**: The methods only works in environments that provide a Buffer global, like Node.js. It is advised to use `readUint8Array()` instead.
-
 ### buff.writeUint8Array(value[, offset])
 - ```value``` *{Uint8Array}* The array buffer value to write.
 - ```offset``` *{number}* An optional offset to write the value to. **Default:** ```Auto managed offset```
@@ -528,7 +526,7 @@ Insert a null terminated Uint8Array.
 
 Read a Buffer of a specified size.
 
-**NOTE**: The methods only works in environments that provide a Buffer global, like Node.js. It is advised to use `readUint8Array()` instead.
+**NOTE**: These method only works in environments that provide a Buffer global, like Node.js. It is advised to use `readUint8Array()` instead.
 
 ### buff.writeBuffer(value[, offset])
 - ```value``` *{Buffer}* The buffer value to write.
