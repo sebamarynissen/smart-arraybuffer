@@ -1,7 +1,7 @@
 {
   "name": "smart-arraybuffer",
   "version": "1.0.0-alpha.1",
-  "description": "smart-arraybuffer is an ArrayBuffer wrapper that adds automatic read & write offset tracking, string operations, data insertions, and more.",
+  "description": "A drop-in replacement for smart-buffer that does not rely on the Buffer global.",
   "main": "dist/smart-arraybuffer.js",
   "exports": {
     ".": "./dist/smart-arraybuffer.js"
