@@ -1,6 +1,6 @@
 {
   "name": "smart-arraybuffer",
-  "version": "1.0.0-alpha.1",
+  "version": "1.0.0",
   "description": "A drop-in replacement for smart-buffer that does not rely on the Buffer global.",
   "main": "dist/smart-arraybuffer.js",
   "exports": {
